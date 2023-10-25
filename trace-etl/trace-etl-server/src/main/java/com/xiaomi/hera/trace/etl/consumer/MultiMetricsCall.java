@@ -1,11 +1,13 @@
 package com.xiaomi.hera.trace.etl.consumer;
 
+import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.youpin.prometheus.client.XmCounter;
 import com.xiaomi.youpin.prometheus.client.XmHistogram;
 import com.xiaomi.youpin.prometheus.client.multi.MutiMetrics;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,17 +16,25 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2023/8/29 16:22
  */
 @Service
-public class MutiMetricsCall {
+public class MultiMetricsCall {
 
+    @NacosValue(value = "${query.env}", autoRefreshed = true)
+    private String env;
 
     private MutiMetrics[] mutiMetricsArray = new MutiMetrics[2];
 
     @Getter
     private AtomicInteger index = new AtomicInteger(0);
 
-    public void init(String group, String service) {
+    @PostConstruct
+    private void init(){
+        // init double MultiMetrics instance
+        mutiMetricsArray[0] = new MutiMetrics();
+        mutiMetricsArray[1] = new MutiMetrics();
+
+        // init MultiMetrics group, is "staging" or "online"
         Arrays.stream(mutiMetricsArray).forEach(it -> {
-            it.init(group, service);
+            it.init(env, "");
         });
     }
 
@@ -39,12 +49,6 @@ public class MutiMetricsCall {
 
     public MutiMetrics old() {
         return mutiMetricsArray[this.index.get() == 0 ? 1 : 0];
-    }
-
-
-    public MutiMetricsCall() {
-        mutiMetricsArray[0] = new MutiMetrics();
-        mutiMetricsArray[1] = new MutiMetrics();
     }
 
 

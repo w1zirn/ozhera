@@ -48,7 +48,7 @@ public class DataCacheService {
     private boolean startCache = false;
 
     @Resource
-    private MutiMetricsCall call;
+    private MultiMetricsCall call;
 
     @Resource
     private EnterManager enterManager;
