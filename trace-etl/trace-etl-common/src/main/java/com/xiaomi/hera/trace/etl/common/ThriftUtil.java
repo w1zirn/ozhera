@@ -1,4 +1,4 @@
-package com.xiaomi.hera.trace.etl.util;
+package com.xiaomi.hera.trace.etl.common;
 
 import com.xiaomi.hera.tspandata.TAttributeKey;
 import com.xiaomi.hera.tspandata.TAttributeType;
@@ -7,6 +7,7 @@ import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ThriftUtil {
 
@@ -24,25 +25,20 @@ public class ThriftUtil {
             case DOUBLE:
                 return String.valueOf(value.getDoubleValue());
             case STRING_ARRAY:
-                return commaSeparated(value.getStringArrayValue());
+                return separated(value.getStringArrayValue());
             case BOOLEAN_ARRAY:
-                return commaSeparated(value.getBoolArrayValue());
+                return separated(value.getBoolArrayValue());
             case LONG_ARRAY:
-                return commaSeparated(value.getLongArrayValue());
+                return separated(value.getLongArrayValue());
             case DOUBLE_ARRAY:
-                return commaSeparated(value.getDoubleArrayValue());
+                return separated(value.getDoubleArrayValue());
         }
         throw new IllegalStateException("Unknown attribute type: " + type);
     }
 
-    private static String commaSeparated(List<?> values) {
-        StringBuilder builder = new StringBuilder();
-        for (Object value : values) {
-            if (builder.length() != 0) {
-                builder.append(',');
-            }
-            builder.append(value);
-        }
-        return builder.toString();
+    private static String separated(List<?> values) {
+        return values.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
     }
 }

@@ -16,7 +16,6 @@ public class SpanHolder {
 
   private TSpanData span;
   private Map<String, String> attributeMap;
-  private Integer appId;
   private String appName;
   private String application;
   private boolean skipAnalysis;
@@ -83,26 +82,25 @@ public class SpanHolder {
       for (int index = 0; index < keys.size(); index++) {
         this.attributeMap.put(
             keys.get(index).getValue(),
-            AttributesHelper.valueToString(keys.get(index), values.get(index)));
+            Thrift.valueToString(keys.get(index), values.get(index)));
       }
     }
   }
 
-  public SpanKind getSpanType() {
+  public SpanKind getSpanKind() {
     if (!this.getSpan().isSetKind()) {
       this.getSpan().setKind(TKind.INTERNAL);
     }
     TKind spanKind = this.getSpan().getKind();
     switch (spanKind) {
       case CLIENT:
-        return SpanKind.
-      case PRODUCER:
-        return SpanKind;
-      case SERVER:
       case CONSUMER:
-        return SpanType.Entry;
+        return SpanKind.Client;
+      case PRODUCER:
+      case SERVER:
+        return SpanKind.Server;
       default:
-        return SpanType.Local;
+        return SpanKind.Local;
     }
   }
 
