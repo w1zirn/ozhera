@@ -35,6 +35,8 @@
     </modules>
 
     <properties>
+        <trace.etl.version>1.0.0-jdk21-SNAPSHOT</trace.etl.version>
+
         <log4j.version>2.18.0</log4j.version>
         <slf4j.version>1.7.36</slf4j.version>
         <logback.version>1.2.10</logback.version>
@@ -43,6 +45,19 @@
         <springboot.version>2.7.15</springboot.version>
         <spring.version>5.3.29</spring.version>
         <junit.version>4.12</junit.version>
+        <feign.version>10.1.0</feign.version>
+        <jcommon.version>1.4-jdk21-SNAPSHOT</jcommon.version>
+        <commons.lang3.version>3.0</commons.lang3.version>
+        <fastjson.version>2.0.25</fastjson.version>
+        <joda-time.version>2.10.5</joda-time.version>
+        <prometheus-trace-etl.version>0.0.6-SNAPSHOT</prometheus-trace-etl.version>
+        <hera.tspandata.version>2.0-SNAPSHOT</hera.tspandata.version>
+        <mysql-connector-java.version>8.0.17</mysql-connector-java.version>
+        <mybatis.springboot.starter.version>2.1.0</mybatis.springboot.starter.version>
+        <mybatis.generator.core.version>1.3.5</mybatis.generator.core.version>
+        <pagehelper.version>5.0.0</pagehelper.version>
+        <c3p0.version>0.9.5.2</c3p0.version>
+        <guava.retrying.version>2.0.0</guava.retrying.version>
         <!-- Replace it with the absolute path of your own trace-etl project. issue#19-->
         <maven.jcommonDirectory>~</maven.jcommonDirectory>
     </properties>
@@ -141,6 +156,79 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>http</artifactId>
+                <version>${jcommon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>prometheus-trace-etl</artifactId>
+                <version>${prometheus-trace-etl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>hera-tspandata</artifactId>
+                <version>${hera.tspandata.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <scope>runtime</scope>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis.springboot.starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-core</artifactId>
+                <version>${mybatis.generator.core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.rholder</groupId>
+                <artifactId>guava-retrying</artifactId>
+                <version>${guava.retrying.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

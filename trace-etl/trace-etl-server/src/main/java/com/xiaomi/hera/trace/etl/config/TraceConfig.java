@@ -2,9 +2,10 @@ package com.xiaomi.hera.trace.etl.config;
 
 import com.xiaomi.hera.trace.etl.domain.HeraTraceConfigVo;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -27,6 +28,11 @@ public class TraceConfig {
     @Autowired
     private ManagerService managerService;
 
+    @Value("${trace.config.get.gap.minutes}")
+    private int configGetGapMinutes;
+    @Value("${trace.config.get.init.delay.minutes}")
+    private int configGetDelayMinutes;
+
     @PostConstruct
     public void init() {
         new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> {
@@ -38,7 +44,7 @@ public class TraceConfig {
             }catch(Throwable t){
                 log.error("schedule trace config error : ",t);
             }
-        },  0,1, TimeUnit.HOURS);
+        },  configGetDelayMinutes,configGetGapMinutes, TimeUnit.MINUTES);
     }
 
     public HeraTraceEtlConfig getConfig(String serviceName) {
@@ -58,8 +64,8 @@ public class TraceConfig {
     }
 
     private String getServiceName(HeraTraceEtlConfig config) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(config.getBindId()).append("-").append(config.getAppName());
+        StringBuilder sb = new StringBuilder();
+        sb.append(config.getBindId()).append("_").append(config.getAppName().replaceAll("-", "_"));
         return sb.toString();
     }
 }
