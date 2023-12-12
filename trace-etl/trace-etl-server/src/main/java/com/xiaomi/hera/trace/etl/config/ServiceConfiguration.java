@@ -1,11 +1,15 @@
 package com.xiaomi.hera.trace.etl.config;
 
+import com.xiaomi.hera.trace.etl.domain.ConfigGetType;
 import com.xiaomi.hera.trace.etl.mapper.HeraTraceEtlConfigMapper;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
+import com.xiaomi.hera.trace.etl.service.DubboManagerService;
+import com.xiaomi.hera.trace.etl.service.HttpManagerService;
 import com.xiaomi.hera.trace.etl.service.WriteEsService;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import com.xiaomi.hera.trace.etl.util.es.EsTraceUtil;
 import com.xiaomi.mone.es.EsProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,6 +23,12 @@ import javax.annotation.Resource;
 @Configuration
 public class ServiceConfiguration {
 
+    @Value("${trace.config.get.type}")
+    private String configGetType;
+
+    @Value("${trace.config.get.http.domain}")
+    private String configGetHttpDomain;
+
     @Autowired
     private HeraTraceEtlConfigMapper heraTraceEtlConfigMapper;
 
@@ -30,7 +40,11 @@ public class ServiceConfiguration {
 
     @Bean
     public ManagerService managerService(){
-        return new ManagerService(heraTraceEtlConfigMapper);
+        if(ConfigGetType.HTTP.equals(configGetType)){
+            return new HttpManagerService(configGetHttpDomain);
+        }else {
+            return new DubboManagerService(heraTraceEtlConfigMapper);
+        }
     }
 
     @Bean

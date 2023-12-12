@@ -3,7 +3,7 @@ package com.xiaomi.hera.trace.etl.es.config;
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceConfigVo;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -41,10 +41,10 @@ public class TraceConfig {
                 for (HeraTraceEtlConfig config : all) {
                     heraTraceConfig.put(getServiceName(config), defalueConfig(config));
                 }
-            }catch(Throwable t){
-                log.error("schedule trace config error : ",t);
+            } catch (Throwable t) {
+                log.error("schedule trace config error : ", t);
             }
-        },  0,1, TimeUnit.HOURS);
+        }, 0, 1, TimeUnit.HOURS);
     }
 
     public HeraTraceEtlConfig getConfig(String serviceName) {
@@ -52,17 +52,17 @@ public class TraceConfig {
     }
 
     public void insert(HeraTraceEtlConfig config) {
-        log.info("trace insert config : "+config);
+        log.info("trace insert config : " + config);
         heraTraceConfig.putIfAbsent(getServiceName(config), defalueConfig(config));
     }
 
     public void update(HeraTraceEtlConfig config) {
-        log.info("trace update config : "+config);
+        log.info("trace update config : " + config);
         heraTraceConfig.put(getServiceName(config), defalueConfig(config));
     }
 
     public void delete(HeraTraceEtlConfig config) {
-        log.info("trace delete config : "+config);
+        log.info("trace delete config : " + config);
         heraTraceConfig.remove(getServiceName(config));
     }
 
@@ -72,14 +72,14 @@ public class TraceConfig {
         return sb.toString();
     }
 
-    private HeraTraceEtlConfig defalueConfig(HeraTraceEtlConfig config){
-        if(config == null){
+    private HeraTraceEtlConfig defalueConfig(HeraTraceEtlConfig config) {
+        if (config == null) {
             return null;
         }
-        if(config.getTraceFilter() == null){
+        if (config.getTraceFilter() == null) {
             config.setTraceFilter(threshold);
         }
-        if(config.getTraceDurationThreshold() == null){
+        if (config.getTraceDurationThreshold() == null) {
             config.setTraceDurationThreshold(durationThreshold);
         }
         return config;

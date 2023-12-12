@@ -4,7 +4,7 @@ import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceConfigVo;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import com.xiaomi.hera.trace.etl.domain.PagerVo;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import com.xiaomi.mone.tpc.login.util.UserUtil;
 import com.xiaomi.mone.tpc.login.vo.AuthUserVo;
 import com.xiaomi.youpin.infra.rpc.Result;
@@ -42,8 +42,8 @@ public class ManagerController {
                 return Result.fail(GeneralCodes.InternalError, "The user information is empty. Please log in again");
             }
             String userName = user.genFullAccount();
-            log.info("userName is : "+userName);
-            if(!isAdmin(userName)) {
+            log.info("userName is : " + userName);
+            if (!isAdmin(userName)) {
                 vo.setUser(userName);
             }
             initPage(vo);
@@ -56,16 +56,17 @@ public class ManagerController {
 
     /**
      * Whether it is admin, the admin member list is configured by nacos.
+     *
      * @param user
      * @return
      */
     private boolean isAdmin(String user) {
-        if(StringUtils.isEmpty(adminMemList)){
+        if (StringUtils.isEmpty(adminMemList)) {
             return false;
         }
         String[] split = adminMemList.split(",");
-        for(String adminMem : split){
-            if(user.equals(adminMem)){
+        for (String adminMem : split) {
+            if (user.equals(adminMem)) {
                 return true;
             }
         }
@@ -102,7 +103,7 @@ public class ManagerController {
                 return Result.fail(GeneralCodes.InternalError, "The user information is empty. Please log in again");
             }
             String user = userInfo.genFullAccount();
-            log.info("insertOrUpdate user : "+user+" param : " + config);
+            log.info("insertOrUpdate user : " + user + " param : " + config);
             return managerService.insertOrUpdate(config, null);
         } catch (Exception e) {
             log.error("insert or update error : ", e);

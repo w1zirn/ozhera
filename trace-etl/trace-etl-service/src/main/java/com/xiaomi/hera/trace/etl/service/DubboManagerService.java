@@ -8,6 +8,7 @@ import com.xiaomi.hera.trace.etl.domain.HeraTraceConfigVo;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import com.xiaomi.hera.trace.etl.domain.PageData;
 import com.xiaomi.hera.trace.etl.mapper.HeraTraceEtlConfigMapper;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import com.xiaomi.hera.trace.etl.util.pool.AsyncNotify;
 import com.xiaomi.youpin.infra.rpc.Result;
 import com.xiaomi.youpin.infra.rpc.errors.GeneralCodes;
@@ -23,7 +24,7 @@ import java.util.List;
  * @Date 2022/4/18 3:31 下午
  */
 @Slf4j
-public class ManagerService {
+public class DubboManagerService implements ManagerService {
 
     @Autowired
     private AsyncNotify asyncNotify;
@@ -32,11 +33,11 @@ public class ManagerService {
 
     private HeraTraceEtlConfigMapper heraTraceEtlConfigMapper;
 
-    public ManagerService(HeraTraceEtlConfigMapper heraTraceEtlConfigMapper) {
+    public DubboManagerService(HeraTraceEtlConfigMapper heraTraceEtlConfigMapper) {
         this.heraTraceEtlConfigMapper = heraTraceEtlConfigMapper;
     }
 
-    public ManagerService(HeraTraceEtlConfigMapper heraTraceEtlConfigMapper, TraceEtlService traceEtlService) {
+    public DubboManagerService(HeraTraceEtlConfigMapper heraTraceEtlConfigMapper, TraceEtlService traceEtlService) {
         this.heraTraceEtlConfigMapper = heraTraceEtlConfigMapper;
         this.traceEtlService = traceEtlService;
     }
