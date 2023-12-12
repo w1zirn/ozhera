@@ -132,7 +132,7 @@ public class ConsumerService {
             if (tagsKeys != null && tagsValues != null && tagsKeys.size() > 0 && tagsKeys.size() != tagsValues.size()) {
                 for (int i = 0; i < tagsKeys.size(); i++) {
                     String key = tagsKeys.get(i).getValue();
-                    String value = ThriftUtil.getStringValue(tagsValues.get(i), tagsKeys.get(i).getType());
+                    String value = ThriftUtil.valueToString(tagsKeys.get(i), tagsValues.get(i));
                     if (filterIsOpen) {
                         if ("span.hera_context".equals(key)) {
                             heraContext = value;

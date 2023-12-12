@@ -1,4 +1,4 @@
-package com.xiaomi.hera.trace.etl.common;
+package com.xiaomi.hera.trace.etl.domain.metrics;
 
 import com.xiaomi.hera.tspandata.TAttributeKey;
 import com.xiaomi.hera.tspandata.TAttributeType;

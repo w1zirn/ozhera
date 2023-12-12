@@ -16,14 +16,19 @@ public class TraceParser {
     public void parse(SpanHolder spanHolder){
         try{
             spanParser.parseBefore(spanHolder);
-            if(SpanKind.Client.equals(spanHolder.getSpanKind())){
-                spanParser.parseClient(spanHolder);
-            }else if(SpanKind.Server.equals(spanHolder.getSpanKind())){
-                spanParser.parseServer(spanHolder);
-            }else if(SpanKind.Local.equals(spanHolder.getSpanKind())){
-                spanParser.parseLocal(spanHolder);
-            }else{
-                log.error("span type value was unexpected, span kind : {}", spanHolder.getSpanKind());
+
+            switch (spanHolder.getSpanKind()){
+                case Client:
+                    spanParser.parseClient(spanHolder);
+                    return;
+                case Server:
+                    spanParser.parseServer(spanHolder);
+                    return;
+                case Local:
+                    spanParser.parseLocal(spanHolder);
+                    return;
+                default:
+                    log.error("span type value was unexpected, span kind : {}", spanHolder.getSpanKind());
             }
         }catch (Throwable t){
             log.error("trace parse error , ",t);
