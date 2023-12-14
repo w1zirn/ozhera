@@ -156,9 +156,9 @@ public class SpanHolder {
         TKind spanKind = this.getSpan().getKind();
         switch (spanKind) {
             case CLIENT:
-            case CONSUMER:
-                return SpanKind.Client;
             case PRODUCER:
+                return SpanKind.Client;
+            case CONSUMER:
             case SERVER:
                 return SpanKind.Server;
             default:

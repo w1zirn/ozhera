@@ -16,17 +16,20 @@ public class TraceParser {
     public void parse(SpanHolder spanHolder){
         try{
             spanParser.parseBefore(spanHolder);
+            if(spanHolder.getSkipAnalysis()){
+                return;
+            }
 
             switch (spanHolder.getSpanKind()){
                 case Client:
                     spanParser.parseClient(spanHolder);
-                    return;
+                    break;
                 case Server:
                     spanParser.parseServer(spanHolder);
-                    return;
+                    break;
                 case Local:
                     spanParser.parseLocal(spanHolder);
-                    return;
+                    break;
                 default:
                     log.error("span type value was unexpected, span kind : {}", spanHolder.getSpanKind());
             }
