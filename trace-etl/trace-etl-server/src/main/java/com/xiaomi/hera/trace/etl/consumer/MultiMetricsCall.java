@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class MultiMetricsCall {
 
-    @NacosValue(value = "${query.env}", autoRefreshed = true)
+    @NacosValue(value = "${server.type}", autoRefreshed = true)
     private String env;
 
     private MutiMetrics[] mutiMetricsArray = new MutiMetrics[2];

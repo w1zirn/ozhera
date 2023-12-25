@@ -1,6 +1,8 @@
 package com.xiaomi.hera.trace.etl.metrics;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,5 +40,13 @@ public class MetricsConverter {
 
     protected List<String> commonTagValues() {
         return null;
+    }
+
+    public String formatMetricName(String type, String name) {
+        return getMetricsPrefix() + type + name;
+    }
+
+    protected String getMetricsPrefix() {
+        return "hera";
     }
 }

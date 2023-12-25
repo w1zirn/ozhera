@@ -23,8 +23,9 @@ public class SpanHolder {
     private Map<String, String> attributeMap;
     private String appName;
     private String application;
-    private boolean skipAnalysis;
+    private boolean skip;
     private SpanType spanType;
+    private String peerServiceName;
 
     public SpanHolder(TSpanData span) {
         this.span = span;
@@ -34,6 +35,7 @@ public class SpanHolder {
             putIntoAttributeMap(this.span.getResouce().getAttributes());
         }
         setSpanType();
+        this.peerServiceName = Peer
     }
 
     private void setSpanType() {
@@ -186,12 +188,12 @@ public class SpanHolder {
         this.application = application;
     }
 
-    public void setSkipAnalysis(boolean skipAnalysis) {
-        this.skipAnalysis = skipAnalysis;
+    public void setSkip(boolean skip) {
+        this.skip = skip;
     }
 
-    public boolean getSkipAnalysis() {
-        return skipAnalysis;
+    public boolean getSkip() {
+        return skip;
     }
 
     public String getService() {

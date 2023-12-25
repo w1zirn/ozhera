@@ -16,7 +16,7 @@ public class TraceParser {
     public void parse(SpanHolder spanHolder){
         try{
             spanParser.parseBefore(spanHolder);
-            if(spanHolder.getSkipAnalysis()){
+            if(spanHolder.getSkip()){
                 return;
             }
 

@@ -22,5 +22,7 @@ public class TraceAttributes {
     public static final String NET_PEER_PORT = "net.peer.port";
     public static final String NET_SOCK_PEER_PORT = "net.sock.peer.port";
     public static final String RPC_SYSTEM = "rpc.system";
-    public static final String MESSAGE_SYSTEM = "messaging.system";
+    public static final String MESSAGING_SYSTEM = "messaging.system";
+    public static final String MESSAGING_DESTINATION = "messaging.destination";
+    public static final String HTTP_HOST = "http.host";
 }
