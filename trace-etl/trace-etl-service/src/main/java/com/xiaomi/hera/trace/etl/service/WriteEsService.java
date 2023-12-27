@@ -214,4 +214,11 @@ public class WriteEsService {
         esTraceUtil.insertBulk(indexPrefix + format, jsonObject);
     }
 
+    public void insert(String indexName, Map jsonMap) {
+        try {
+            esTraceUtil.insertBulk(indexName, jsonMap);
+        } catch (Exception e) {
+            log.error("插入db/redis/es数据异常：", e);
+        }
+    }
 }

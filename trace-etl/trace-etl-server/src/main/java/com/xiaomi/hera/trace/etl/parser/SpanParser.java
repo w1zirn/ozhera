@@ -3,7 +3,6 @@ package com.xiaomi.hera.trace.etl.parser;
 import com.xiaomi.hera.trace.etl.consumer.MultiMetricsCall;
 import com.xiaomi.hera.trace.etl.domain.converter.ClientConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
-import com.xiaomi.hera.trace.etl.domain.util.PeerHelper;
 import com.xiaomi.hera.trace.etl.metrics.client.ClientMetricsConverter;
 import com.xiaomi.hera.trace.etl.skip.SpanFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +25,11 @@ public class SpanParser {
     }
 
     public void parseClient(SpanHolder spanHolder) {
-        ClientConverter clientConverter = ClientConverter.builder()
-                .operation(spanHolder.getOperationName())
-                .peerServiceName(PeerHelper.getPeer(spanHolder))
-                .spanType(spanHolder.getSpanType())
-                .responseCode(spanHolder.getStatusCode())
-                .build();
+        ClientConverter clientConverter = new ClientConverter();
+        clientConverter.setOperation(spanHolder.getOperationName());
+//                .peerServiceName(PeerHelper.getPeer(spanHolder))
+        clientConverter.setSpanType(spanHolder.getSpanType());
+        clientConverter.setResponseCode(spanHolder.getStatusCode());
         clientMetricsConverter.convert(clientConverter);
     }
 

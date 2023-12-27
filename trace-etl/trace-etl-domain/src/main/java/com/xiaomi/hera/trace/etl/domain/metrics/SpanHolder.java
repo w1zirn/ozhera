@@ -25,7 +25,6 @@ public class SpanHolder {
     private String application;
     private boolean skip;
     private SpanType spanType;
-    private String peerServiceName;
 
     public SpanHolder(TSpanData span) {
         this.span = span;
@@ -35,7 +34,6 @@ public class SpanHolder {
             putIntoAttributeMap(this.span.getResouce().getAttributes());
         }
         setSpanType();
-        this.peerServiceName = Peer
     }
 
     private void setSpanType() {
@@ -76,7 +74,7 @@ public class SpanHolder {
             this.spanType = SpanType.http;
             return;
         }
-        String mq = attributeMap.get(TraceAttributes.MESSAGE_SYSTEM);
+        String mq = attributeMap.get(TraceAttributes.MESSAGING_SYSTEM);
         if(mq != null){
             try {
                 requestType = SpanType.valueOf(mq.toLowerCase());
