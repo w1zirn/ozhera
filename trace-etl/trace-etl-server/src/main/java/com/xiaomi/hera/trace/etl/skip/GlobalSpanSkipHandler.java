@@ -2,7 +2,7 @@ package com.xiaomi.hera.trace.etl.skip;
 
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
 
-public interface GlobalSpanFilterHandler {
+public interface GlobalSpanSkipHandler {
 
-    boolean filter(SpanHolder spanHolder);
+    boolean spanSkip(SpanHolder spanHolder);
 }

@@ -10,6 +10,13 @@ import org.springframework.stereotype.Service;
 public class ConverterServiceImpl implements ConverterService{
     @Override
     public ClientConverter getClientConverter(SpanHolder spanHolder) {
+        ClientConverter clientConverter = new ClientConverter();
+        clientConverter.setOperationName(spanHolder.getOperationName());
+        clientConverter.setApplication(spanHolder.getApplication());
+        clientConverter.setError(spanHolder.getIsError());
+        clientConverter.setDuration(spanHolder.getEndTime() - spanHolder.getStartTime());
+        clientConverter.setEndTime(spanHolder.getEndTime());
+        clientConverter.setDataSource();
         return null;
     }
 

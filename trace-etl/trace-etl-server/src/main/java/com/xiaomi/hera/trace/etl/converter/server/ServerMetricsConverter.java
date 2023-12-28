@@ -1,9 +1,9 @@
-package com.xiaomi.hera.trace.etl.metrics.server;
+package com.xiaomi.hera.trace.etl.converter.server;
 
 import com.xiaomi.hera.trace.etl.consumer.MultiMetricsCall;
 import com.xiaomi.hera.trace.etl.domain.converter.ServerConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket;
-import com.xiaomi.hera.trace.etl.metrics.BaseMetricsConverter;
+import com.xiaomi.hera.trace.etl.converter.BaseMetricsConverter;
 import com.xiaomi.hera.trace.etl.source.ErrorSourceReceive;
 import com.xiaomi.hera.trace.etl.source.service.SourceObtainService;
 import lombok.extern.slf4j.Slf4j;

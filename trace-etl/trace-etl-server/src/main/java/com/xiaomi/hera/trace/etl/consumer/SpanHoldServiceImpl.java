@@ -12,6 +12,12 @@ public class SpanHoldServiceImpl implements SpanHoldService {
 
     @Override
     public SpanHolder getSpanHolder(TSpanData data) {
-        return new SpanHolder(data);
+        SpanHolder spanHolder = new SpanHolder(data);
+        String service = spanHolder.getService();
+        if(service == null){
+            return null;
+        }
+        spanHolder.setApplication(service.replace("-", "_"));
+        return spanHolder;
     }
 }

@@ -9,19 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SpanFilter {
+public class SpanSkipHandler {
 
     @Autowired
     private TraceConfig traceConfig;
 
     @Autowired
-    private GlobalSpanFilterHandler globalSpanFilterHandler;
+    private GlobalSpanSkipHandler globalSpanFilterHandler;
 
-    public boolean filter(SpanHolder spanHolder){
+    public boolean spanSkip(SpanHolder spanHolder){
         if(StringUtils.isEmpty(spanHolder.getApplication())){
             return false;
         }
-        if(globalSpanFilterHandler.filter(spanHolder)){
+        if(globalSpanFilterHandler.spanSkip(spanHolder)){
             return true;
         }
         HeraTraceEtlConfig heraTraceEtlConfig = getHeraTraceEtlConfig(spanHolder.getApplication());

@@ -1,4 +1,4 @@
-package com.xiaomi.hera.trace.etl.metrics;
+package com.xiaomi.hera.trace.etl.converter;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.hera.trace.etl.config.TraceConfig;
@@ -6,7 +6,6 @@ import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.ServerConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
-import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverterDomain;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

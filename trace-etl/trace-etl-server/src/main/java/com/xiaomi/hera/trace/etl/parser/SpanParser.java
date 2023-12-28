@@ -1,41 +1,50 @@
 package com.xiaomi.hera.trace.etl.parser;
 
 import com.xiaomi.hera.trace.etl.consumer.MultiMetricsCall;
+import com.xiaomi.hera.trace.etl.converter.client.ClientMetricsConverter;
+import com.xiaomi.hera.trace.etl.converter.local.LocalMetricsConverter;
+import com.xiaomi.hera.trace.etl.converter.server.ServerMetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.ClientConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
-import com.xiaomi.hera.trace.etl.metrics.client.ClientMetricsConverter;
-import com.xiaomi.hera.trace.etl.skip.SpanFilter;
+import com.xiaomi.hera.trace.etl.parser.converter.ConverterService;
+import com.xiaomi.hera.trace.etl.skip.SpanSkipHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnProperty(name = "service.selector.property", havingValue = "outer")
 public class SpanParser {
 
     @Autowired
     private MultiMetricsCall multiMetrics;
     @Autowired
-    private SpanFilter spanFilter;
+    private SpanSkipHandler spanFilter;
+
+    @Autowired
+    private ConverterService converterService;
     @Autowired
     private ClientMetricsConverter clientMetricsConverter;
+    @Autowired
+    private ServerMetricsConverter serverMetricsConverter;
+    @Autowired
+    private LocalMetricsConverter localMetricsConverter;
 
     public void parseBefore(SpanHolder spanHolder) {
         // statistics span QPS
         multiMetrics.newCounter("trace_statistics_span_count", "application").with(spanHolder.getApplication()).add(1, spanHolder.getApplication());
-        spanHolder.setSkip(spanFilter.filter(spanHolder));
+        spanHolder.setSkip(spanFilter.spanSkip(spanHolder));
     }
 
     public void parseClient(SpanHolder spanHolder) {
-        ClientConverter clientConverter = new ClientConverter();
-        clientConverter.setOperation(spanHolder.getOperationName());
-//                .peerServiceName(PeerHelper.getPeer(spanHolder))
-        clientConverter.setSpanType(spanHolder.getSpanType());
-        clientConverter.setResponseCode(spanHolder.getStatusCode());
-        clientMetricsConverter.convert(clientConverter);
+        clientMetricsConverter.convert(converterService.getClientConverter(spanHolder));
     }
 
     public void parseServer(SpanHolder spanHolder) {
+        serverMetricsConverter.convert(converterService.getServerConverter(spanHolder));
     }
 
     public void parseLocal(SpanHolder spanHolder) {
+        localMetricsConverter.convert(converterService.getLocalConverter(spanHolder));
     }
 }

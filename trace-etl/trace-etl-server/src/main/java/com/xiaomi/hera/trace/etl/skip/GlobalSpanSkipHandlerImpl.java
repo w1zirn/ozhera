@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @ConditionalOnProperty(name = "service.selector.property", havingValue = "outer")
-public class OuterGlobalSpanFilterHandler implements GlobalSpanFilterHandler {
+public class GlobalSpanSkipHandlerImpl implements GlobalSpanSkipHandler {
 
     @NacosValue(value = "${query.excludeMethod}", autoRefreshed = true)
     private String excludeMethod;
@@ -35,7 +35,7 @@ public class OuterGlobalSpanFilterHandler implements GlobalSpanFilterHandler {
     private String excludeServiceName;
 
     @Override
-    public boolean filter(SpanHolder spanHolder) {
+    public boolean spanSkip(SpanHolder spanHolder) {
         String serviceName = spanHolder.getSpan().getExtra().getServiceName();
         if (StringUtils.isEmpty(serviceName) || exclude(excludeServiceName, serviceName)) {
             return true;

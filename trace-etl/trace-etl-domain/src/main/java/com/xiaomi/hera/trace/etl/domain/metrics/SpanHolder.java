@@ -21,7 +21,6 @@ public class SpanHolder {
 
     private TSpanData span;
     private Map<String, String> attributeMap;
-    private String appName;
     private String application;
     private boolean skip;
     private SpanType spanType;

@@ -2,6 +2,7 @@ package com.xiaomi.hera.trace.etl.domain.converter;
 
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanKind;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -21,7 +22,7 @@ public class MetricsConverter {
 
     private int responseCode;
 
-    private int duration;
+    private long duration;
 
     private boolean error;
 
