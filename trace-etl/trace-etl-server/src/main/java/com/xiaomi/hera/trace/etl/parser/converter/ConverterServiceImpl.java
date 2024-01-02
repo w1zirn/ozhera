@@ -4,14 +4,18 @@ import com.xiaomi.hera.trace.etl.domain.converter.ClientConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.LocalConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.ServerConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
+import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
 import com.xiaomi.hera.trace.etl.domain.trace.TraceAttributes;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class ConverterServiceImpl implements ConverterService{
     @Override
     public ClientConverter getClientConverter(SpanHolder spanHolder) {
+        Map<String, String> attributeMap = spanHolder.getAttributeMap();
         ClientConverter clientConverter = new ClientConverter();
         clientConverter.setOperationName(spanHolder.getOperationName());
         clientConverter.setApplication(spanHolder.getApplication());
@@ -22,48 +26,48 @@ public class ConverterServiceImpl implements ConverterService{
         clientConverter.setDataSource(dataSource);
         switch (spanHolder.getSpanType().spanTypeGroup()) {
             case RPC:
-                if (clientCall.getType() == RequestType.GRPC) {
-                    clientCall.setResponseCode(Integer.parseInt(attributeMap.getOrDefault(SemanticAttributes.RPC_GRPC_STATUS_CODE.getKey(), "0")));
+                if (spanHolder.getSpanType() == SpanType.grpc) {
+                    clientConverter.setResponseCode(Integer.parseInt(attributeMap.getOrDefault(TraceAttributes.RPC_GRPC_STATUS_CODE, "0")));
                 }
-                clientCall.setOperationType(attributeMap.getOrDefault(SemanticAttributes.RPC_SERVICE.getKey(), ""));
-                clientCall.setOperation(attributeMap.getOrDefault(SemanticAttributes.RPC_METHOD.getKey(), ""));
+                clientConverter.setServiceName(attributeMap.getOrDefault(TraceAttributes.RPC_SERVICE, ""));
+                clientConverter.setMethodName(attributeMap.getOrDefault(TraceAttributes.RPC_METHOD, ""));
                 break;
             case DATABASE:
-                clientCall.setOperationType(attributeMap.getOrDefault(SemanticAttributes.DB_OPERATION.getKey(), ""));
-                String stmt = attributeMap.getOrDefault(SemanticAttributes.DB_STATEMENT.getKey(), "");
-                clientCall.setOperation(reduceString(stmt, 100));
-                if ("".equals(clientCall.getOperationType()) && !"".equals(stmt)) {
-                    clientCall.setOperationType(stmt.split(" ")[0]);
+                clientConverter.setServiceName(attributeMap.getOrDefault(TraceAttributes.DB_OPERATION, ""));
+                String stmt = attributeMap.getOrDefault(TraceAttributes.DB_STATEMENT, "");
+                clientConverter.setMethodName(reduceString(stmt, 100));
+                if ("".equals(clientConverter.getOperationType()) && !"".equals(stmt)) {
+                    clientConverter.setServiceName(stmt.split(" ")[0]);
                 }
                 // for es type client call, take (http method + indexName) as operation
                 // like PUT /cloud_mitelemetry_trace_staging@skywalking_instance_traffic-2023.03.10
-                if (RequestType.ELASTICSEARCH.equals(clientCall.getType()) && StringUtils.isNotEmpty(clientCall.getOperation())) {
-                    String operation = clientCall.getOperation();
+                if (RequestType.ELASTICSEARCH.equals(clientConverter.getType()) && StringUtils.isNotEmpty(clientConverter.getOperation())) {
+                    String operation = clientConverter.getOperation();
                     String[] arr = operation.split("/");
                     if (arr.length >= 2) {
                         operation = arr[0].concat("/").concat(arr[1]);
                     }
-                    clientCall.setOperation(operation);
+                    clientConverter.setMethodName(operation);
                 }
-                if (RequestType.REDIS.equals(clientCall.getType())) {
-                    clientCall.setOperation("");
+                if (RequestType.REDIS.equals(clientConverter.getType())) {
+                    clientConverter.setMethodName("");
                 }
-                String dbName = attributeMap.get(SemanticAttributes.DB_NAME.getKey());
+                String dbName = attributeMap.get(TraceAttributes.DB_NAME);
                 if (dbName != null) {
-                    clientCall.setDestServiceName(clientCall.getDestServiceName() + "/" + dbName);
+                    clientConverter.setDestServiceName(clientConverter.getDestServiceName() + "/" + dbName);
                 }
                 break;
             case HTTP:
-                clientCall.setOperationType(attributeMap.getOrDefault(SemanticAttributes.HTTP_METHOD.getKey(), ""));
-                clientCall.setOperation(StringUtils.defaultString(sourceEndpointName, ""));
+                clientConverter.setServiceName(attributeMap.getOrDefault(TraceAttributes.HTTP_METHOD, ""));
+                clientConverter.setMethodName(StringUtils.defaultString(sourceEndpointName, ""));
                 break;
             case MQ:
-                clientCall.setOperationType(attributeMap.getOrDefault(SemanticAttributes.MESSAGING_DESTINATION.getKey(), ""));
-                clientCall.setOperation(attributeMap.getOrDefault(SemanticAttributes.MESSAGING_OPERATION.getKey(), ""));
+                clientConverter.setServiceName(attributeMap.getOrDefault(TraceAttributes.MESSAGING_DESTINATION, ""));
+                clientConverter.setMethodName(attributeMap.getOrDefault(TraceAttributes.MESSAGING_OPERATION, ""));
                 break;
             default:
-                clientCall.setOperationType("");
-                clientCall.setOperation("");
+                clientConverter.setServiceName("");
+                clientConverter.setMethodName("");
                 break;
         }
         clientConverter.setHttpMethod();
@@ -81,5 +85,12 @@ public class ConverterServiceImpl implements ConverterService{
     @Override
     public LocalConverter getLocalConverter(SpanHolder spanHolder) {
         return null;
+    }
+
+    private String reduceString(String ori, int size) {
+        if (StringUtils.isNotEmpty(ori) && ori.length() > size) {
+            return ori.substring(0, size - 1);
+        }
+        return ori;
     }
 }
