@@ -59,12 +59,105 @@
         <c3p0.version>0.9.5.2</c3p0.version>
         <guava.retrying.version>2.0.0</guava.retrying.version>
         <guava.version>33.0.0-jre</guava.version>
+        <docean.version>1.4-jdk20-SNAPSHOT</docean.version>
+        <docean.jdk8.version>1.4-SNAPSHOT</docean.jdk8.version>
+        <okio.version>3.5.0</okio.version>
+        <dubbo.version>2.7.12-mone-v8-SNAPSHOT</dubbo.version>
+        <simpleclient.version>0.10.0</simpleclient.version>
+        <spring.context.support.version>1.0.10-mone-SNAPSHOT</spring.context.support.version>
+        <dubbo.registry.nacos.version>1.2.1-mone-SNAPSHOT</dubbo.registry.nacos.version>
+        <nacos.client.version>1.2.1-mone-v3-SNAPSHOT</nacos.client.version>
+        <nacos.spring.context.version>0.3.3</nacos.spring.context.version>
+        <mone.es.version>1.5-SNAPSHOT</mone.es.version>
+        <http.client.version>4.5.12</http.client.version>
+        <http.client.core.version>4.4.13</http.client.core.version>
+        <jedis.version>4.2.0</jedis.version>
+        <rocksdb.version>7.0.3</rocksdb.version>
+        <rocketmq.version>4.9.4</rocketmq.version>
+        <mone.log.version>1.7-SNAPSHOT</mone.log.version>
+        <javassist.version>3.21.0-GA</javassist.version>
+        <jackson.version>2.13.5</jackson.version>
+        <tspandata.version>2.0-SNAPSHOT</tspandata.version>
+        <mone.common.version>1.7.1-SNAPSHOT</mone.common.version>
+        <tpc.login.version>1.0.0-SNAPSHOT</tpc.login.version>
+        <ozhera.app.version>1.4-jdk21-SNAPSHOT</ozhera.app.version>
+
         <!-- Replace it with the absolute path of your own trace-etl project. issue#19-->
         <maven.jcommonDirectory>~</maven.jcommonDirectory>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>app-api</artifactId>
+                <version>${ozhera.app.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>mi-tpclogin-sdk</artifactId>
+                <version>${tpc.login.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>common</artifactId>
+                <version>${mone.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>infra-result</artifactId>
+                <version>${docean.jdk8.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>ozhera-tspandata</artifactId>
+                <version>${tspandata.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>log</artifactId>
+                <version>${mone.log.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.rocksdb</groupId>
+                <artifactId>rocksdbjni</artifactId>
+                <version>${rocksdb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${http.client.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore-nio</artifactId>
+                <version>${http.client.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${http.client.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
@@ -236,6 +329,78 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>docean-spring-starter</artifactId>
+                <version>${docean.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>docean</artifactId>
+                <version>${docean.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>docean-plugin-spring</artifactId>
+                <version>${docean.jdk8.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>${okio.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient</artifactId>
+                <version>${simpleclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_httpserver</artifactId>
+                <version>${simpleclient.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring.context.support.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>dubbo-registry-nacos</artifactId>
+                <version>${dubbo.registry.nacos.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>nacos-client</artifactId>
+                <version>${nacos.client.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.nacos</groupId>
+                <artifactId>nacos-spring-context</artifactId>
+                <version>${nacos.spring.context.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>run.mone</groupId>
+                <artifactId>es</artifactId>
+                <version>${mone.es.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
