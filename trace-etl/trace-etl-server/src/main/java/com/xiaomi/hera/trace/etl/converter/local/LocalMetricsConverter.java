@@ -16,9 +16,6 @@ import org.springframework.stereotype.Service;
 public class LocalMetricsConverter extends BaseMetricsConverter {
 
     @Autowired
-    private MultiMetricsCall multiMetricsCall;
-
-    @Autowired
     private ErrorSourceReceive errorSourceReceive;
 
     @Autowired
@@ -31,23 +28,23 @@ public class LocalMetricsConverter extends BaseMetricsConverter {
                 String[] customKeys = tagKeys("methodName");
                 String[] customValues = tagValues(localConverter, localConverter.getMethodName());
                 type = "CustomizeMethod";
-                multiMetricsCall.newCounter(formatMetricName(type, "TotalCount"), customKeys)
+                multiMetricsCall.newCounter(buildMetricName(type, "TotalCount"), customKeys)
                         .with(customValues)
                         .add(1, customValues);
-                multiMetricsCall.newHistogram(formatMetricName(type, "TimeCost"), MetricsBucket.DUBBO_BUCKET, customKeys)
+                multiMetricsCall.newHistogram(buildMetricName(type, "TimeCost"), MetricsBucket.DUBBO_BUCKET, customKeys)
                         .with(customValues)
                         .observe(localConverter.getDuration(), customValues);
                 if (localConverter.isError()) {
-                    multiMetricsCall.newCounter(formatMetricName(type, "Error"), customKeys)
+                    multiMetricsCall.newCounter(buildMetricName(type, "Error"), customKeys)
                             .with(customValues)
                             .add(1, customValues);
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(localConverter));
                 } else {
-                    multiMetricsCall.newCounter(formatMetricName(type, "SuccessCount"), customKeys)
+                    multiMetricsCall.newCounter(buildMetricName(type, "SuccessCount"), customKeys)
                             .with(customValues)
                             .add(1, customValues);
                     if (localConverter.getDuration() > getSlowThreshold(localConverter.getSpanType(), localConverter.getApplication())) {
-                        multiMetricsCall.newCounter(formatMetricName(type, "SlowQuery"), customKeys)
+                        multiMetricsCall.newCounter(buildMetricName(type, "SlowQuery"), customKeys)
                                 .with(customValues)
                                 .add(1, customValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(localConverter));

@@ -1,5 +1,6 @@
 package com.xiaomi.hera.trace.etl.metadata;
 
+import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
 import com.xiaomi.mone.app.api.model.HeraMetaDataModel;
 
 /**
@@ -11,5 +12,7 @@ public interface OzHeraMetaDataService {
 
     void syncHeraMetaData();
 
-    HeraMetaDataModel getHeraMetaData();
+    HeraMetaDataModel getHeraMetaData(String serviceName);
+
+    HeraMetaDataModel getHeraMetaData(SpanHolder spanHolder);
 }

@@ -35,6 +35,8 @@ public class SpanHolder {
         setSpanType();
     }
 
+
+
     private void setSpanType() {
         if (span.getAttributes() == null) {
             this.spanType = SpanType.unknown;

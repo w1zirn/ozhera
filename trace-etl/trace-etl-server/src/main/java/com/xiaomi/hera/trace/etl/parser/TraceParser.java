@@ -23,6 +23,7 @@ public class TraceParser {
             switch (spanHolder.getSpanKind()){
                 case Client:
                     spanParser.parseClient(spanHolder);
+                    spanParser.parseTopology(spanHolder);
                     break;
                 case Server:
                     spanParser.parseServer(spanHolder);

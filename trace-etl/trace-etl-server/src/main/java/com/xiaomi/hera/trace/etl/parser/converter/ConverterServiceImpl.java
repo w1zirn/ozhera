@@ -3,6 +3,7 @@ package com.xiaomi.hera.trace.etl.parser.converter;
 import com.xiaomi.hera.trace.etl.domain.converter.ClientConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.LocalConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.ServerConverter;
+import com.xiaomi.hera.trace.etl.domain.converter.TopologyConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
 import com.xiaomi.hera.trace.etl.domain.trace.TraceAttributes;
@@ -37,8 +38,6 @@ public class ConverterServiceImpl implements ConverterService{
         clientConverter.setError(spanHolder.getIsError());
         clientConverter.setDuration(spanHolder.getEndTime() - spanHolder.getStartTime());
         clientConverter.setEndTime(spanHolder.getEndTime());
-        String dataSource = spanHolder.getAttribute(TraceAttributes.DB_CONNECTION_STRING) + "/" + spanHolder.getAttribute(TraceAttributes.DB_NAME);
-        clientConverter.setDataSource(dataSource);
         switch (spanHolder.getSpanType().spanTypeGroup()) {
             case RPC:
                 if (spanHolder.getSpanType() == SpanType.grpc) {
@@ -64,18 +63,25 @@ public class ConverterServiceImpl implements ConverterService{
                     }
                     clientConverter.setMethodName(methodName);
                 }
+                String dbName = attributeMap.get(TraceAttributes.DB_NAME);
                 if (SpanType.redis.equals(clientConverter.getSpanType())) {
                     clientConverter.setMethodName("");
                     clientConverter.setServiceName(clientConverter.getDestServiceName() + "/" + dbName);
                 }
-                String dbName = attributeMap.get(TraceAttributes.DB_NAME);
-                if (dbName != null) {
+                if (clientConverter.getDestServiceName() != null) {
                     clientConverter.setDataSource(clientConverter.getDestServiceName() + "/" + dbName);
+                }else{
+                    String dataSource = spanHolder.getAttribute(TraceAttributes.DB_CONNECTION_STRING) + "/" + spanHolder.getAttribute(TraceAttributes.DB_NAME);
+                    clientConverter.setDataSource(dataSource);
                 }
                 break;
             case HTTP:
-                clientConverter.setMethodName(attributeMap.getOrDefault(TraceAttributes.HTTP_METHOD, ""));
-                clientConverter.setMethodName(StringUtils.defaultString(sourceEndpointName, ""));
+                String methodName = attributeMap.getOrDefault(TraceAttributes.HTTP_METHOD, "");
+                clientConverter.setServiceName(methodName);
+                // http server need this label
+                clientConverter.setHttpMethod(methodName);
+                clientConverter.setResponseCode(attributeMap.getOrDefault(TraceAttributes.HTTP_STATUS_CODE, "0"));
+                clientConverter.setMethodName(StringUtils.defaultString(spanHolder.getName(), ""));
                 break;
             case MQ:
                 clientConverter.setServiceName(attributeMap.getOrDefault(TraceAttributes.MESSAGING_DESTINATION, ""));
@@ -86,10 +92,8 @@ public class ConverterServiceImpl implements ConverterService{
                 clientConverter.setMethodName("");
                 break;
         }
-        clientConverter.setHttpMethod();
         clientConverter.setSpanType(spanHolder.getSpanType());
         clientConverter.setSpanKind(spanHolder.getSpanKind());
-        clientConverter.setSql(spanHolder.getAttribute(TraceAttributes.DB_STATEMENT));
         return clientConverter;
     }
 
@@ -100,6 +104,11 @@ public class ConverterServiceImpl implements ConverterService{
 
     @Override
     public LocalConverter getLocalConverter(SpanHolder spanHolder) {
+        return null;
+    }
+
+    @Override
+    public TopologyConverter getTopologyConverter(SpanHolder spanHolder) {
         return null;
     }
 

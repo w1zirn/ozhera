@@ -2,6 +2,7 @@ package com.xiaomi.hera.trace.etl.converter;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.hera.trace.etl.config.TraceConfig;
+import com.xiaomi.hera.trace.etl.consumer.MultiMetricsCall;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.ServerConverter;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,9 @@ public class BaseMetricsConverter {
 
     @Autowired
     private TraceConfig traceConfig;
+
+    @Autowired
+    protected MultiMetricsCall multiMetricsCall;
 
     private final static int DEFAULT_SLOW_TIME = 1000;
 
@@ -64,21 +69,21 @@ public class BaseMetricsConverter {
     }
 
     protected List<String> getCommonTagKeys() {
-        return null;
+        return Collections.emptyList();
     }
 
     protected List<String> commonTagValues(MetricsConverter metricsConverter) {
-        return null;
+        return Collections.emptyList();
     }
 
     protected void metricsExtend(MetricsConverter metricsConverter){
     }
 
-    public String formatMetricName(String type, String name) {
+    public String buildMetricName(String type, String name) {
         return getMetricsPrefix() + type + name;
     }
 
-    public String formatMetricName(String type) {
+    public String buildMetricName(String type) {
         return getMetricsPrefix() + type;
     }
 

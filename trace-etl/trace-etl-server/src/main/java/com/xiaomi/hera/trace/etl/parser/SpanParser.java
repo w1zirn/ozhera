@@ -4,7 +4,7 @@ import com.xiaomi.hera.trace.etl.consumer.MultiMetricsCall;
 import com.xiaomi.hera.trace.etl.converter.client.ClientMetricsConverter;
 import com.xiaomi.hera.trace.etl.converter.local.LocalMetricsConverter;
 import com.xiaomi.hera.trace.etl.converter.server.ServerMetricsConverter;
-import com.xiaomi.hera.trace.etl.domain.converter.ClientConverter;
+import com.xiaomi.hera.trace.etl.converter.topology.TopologyMetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
 import com.xiaomi.hera.trace.etl.parser.converter.ConverterService;
 import com.xiaomi.hera.trace.etl.skip.SpanSkipHandler;
@@ -29,6 +29,8 @@ public class SpanParser {
     private ServerMetricsConverter serverMetricsConverter;
     @Autowired
     private LocalMetricsConverter localMetricsConverter;
+    @Autowired
+    private TopologyMetricsConverter topoMetricsConverter;
 
     public void parseBefore(SpanHolder spanHolder) {
         // statistics span QPS
@@ -46,5 +48,8 @@ public class SpanParser {
 
     public void parseLocal(SpanHolder spanHolder) {
         localMetricsConverter.convert(converterService.getLocalConverter(spanHolder));
+    }
+    public void parseTopology(SpanHolder spanHolder) {
+        topoMetricsConverter.convert(converterService.getTopologyConverter(spanHolder));
     }
 }

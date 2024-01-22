@@ -2,6 +2,9 @@ package com.xiaomi.hera.trace.etl.domain.trace;
 
 public class TraceAttributes {
 
+    /**
+     * thread
+     */
     public static final String THREAD_NAME = "thread.name";
     /**
      * http
@@ -44,5 +47,6 @@ public class TraceAttributes {
      */
     public static final String MESSAGING_SYSTEM = "messaging.system";
     public static final String MESSAGING_DESTINATION = "messaging.destination";
+    public static final String MESSAGING_OPERATION = "messaging.operation";
 
 }

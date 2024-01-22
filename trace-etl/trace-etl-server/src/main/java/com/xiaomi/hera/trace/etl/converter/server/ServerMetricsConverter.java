@@ -17,9 +17,6 @@ import java.util.Map;
 public class ServerMetricsConverter extends BaseMetricsConverter {
 
     @Autowired
-    private MultiMetricsCall multiMetricsCall;
-
-    @Autowired
     private ErrorSourceReceive errorSourceReceive;
 
     @Autowired
@@ -34,15 +31,15 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                 String[] httpKeysWithCode = tagKeys("methodName", "httpMethod", "errorCode");
                 String[] httpValuesWithCode = tagValues(serverConverter, serverConverter.getMethodName(), serverConverter.getHttpMethod(), String.valueOf(serverConverter.getResponseCode()));
                 type = "aop";
-                multiMetricsCall.newCounter(formatMetricName(type, "TotalMethodCount"), httpKeys).with(httpValues).add(1, httpValues);
-                multiMetricsCall.newHistogram(formatMetricName(type, "MethodTimeCount"), MetricsBucket.HTTP_BUCKET, httpKeys).with(httpValues).observe(serverConverter.getDuration(), httpValues);
+                multiMetricsCall.newCounter(buildMetricName(type, "TotalMethodCount"), httpKeys).with(httpValues).add(1, httpValues);
+                multiMetricsCall.newHistogram(buildMetricName(type, "MethodTimeCount"), MetricsBucket.HTTP_BUCKET, httpKeys).with(httpValues).observe(serverConverter.getDuration(), httpValues);
                 if (serverConverter.isError()) {
-                    multiMetricsCall.newCounter(formatMetricName("http", "Error"), httpKeysWithCode).with(httpValuesWithCode).add(1, httpValuesWithCode);
+                    multiMetricsCall.newCounter(buildMetricName("http", "Error"), httpKeysWithCode).with(httpValuesWithCode).add(1, httpValuesWithCode);
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(serverConverter));
                 } else {
-                    multiMetricsCall.newCounter(formatMetricName(type, "SuccessMethodCount"), httpKeys).with(httpValues).add(1, httpValues);
+                    multiMetricsCall.newCounter(buildMetricName(type, "SuccessMethodCount"), httpKeys).with(httpValues).add(1, httpValues);
                     if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getApplication())) {
-                        multiMetricsCall.newCounter(formatMetricName("http", "SlowQuery"), httpKeys).with(httpValues).add(1, httpValues);
+                        multiMetricsCall.newCounter(buildMetricName("http", "SlowQuery"), httpKeys).with(httpValues).add(1, httpValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(serverConverter));
                     }
                 }
@@ -52,15 +49,15 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                 String[] dubboKeys = tagKeys("serviceName", "methodName");
                 Map<String, String> rpcMap = parseRPCServiceAndMethod(serverConverter);
                 String[] dubboValues = tagValues(serverConverter, rpcMap.get("rpcService"), rpcMap.get("rpcMethod"));
-                multiMetricsCall.newCounter(formatMetricName(type, "MethodCalledCount"), dubboKeys).with(dubboValues).add(1, dubboValues);
-                multiMetricsCall.newHistogram(formatMetricName(type, "ProviderCount"), MetricsBucket.DUBBO_BUCKET, dubboKeys).with(dubboValues).observe(serverConverter.getDuration(), dubboValues);
+                multiMetricsCall.newCounter(buildMetricName(type, "MethodCalledCount"), dubboKeys).with(dubboValues).add(1, dubboValues);
+                multiMetricsCall.newHistogram(buildMetricName(type, "ProviderCount"), MetricsBucket.DUBBO_BUCKET, dubboKeys).with(dubboValues).observe(serverConverter.getDuration(), dubboValues);
                 if (serverConverter.isError()) {
-                    multiMetricsCall.newCounter(formatMetricName(type, "ProviderError"), dubboKeys).with(dubboValues).add(1, dubboValues);
+                    multiMetricsCall.newCounter(buildMetricName(type, "ProviderError"), dubboKeys).with(dubboValues).add(1, dubboValues);
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(serverConverter));
                 } else {
-                    multiMetricsCall.newCounter(formatMetricName(type, "MethodCalledSuccessCount"), dubboKeys).with(dubboValues).add(1, dubboValues);
+                    multiMetricsCall.newCounter(buildMetricName(type, "MethodCalledSuccessCount"), dubboKeys).with(dubboValues).add(1, dubboValues);
                     if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getApplication())) {
-                        multiMetricsCall.newCounter(formatMetricName(type, "ProviderSlowQuery"), dubboKeys).with(dubboValues).add(1, dubboValues);
+                        multiMetricsCall.newCounter(buildMetricName(type, "ProviderSlowQuery"), dubboKeys).with(dubboValues).add(1, dubboValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(serverConverter));
                     }
                 }
@@ -70,15 +67,15 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                 type = serverConverter.getSpanType().name() + "Consumer";
                 String[] mqKeys = tagKeys("topic", "method");
                 String[] mqValues = tagValues(serverConverter, serverConverter.getTopic(), serverConverter.getMethodName());
-                multiMetricsCall.newCounter(formatMetricName(type), mqKeys).with(mqValues).add(1, mqValues);
-                multiMetricsCall.newHistogram(formatMetricName(type, "TimeCost"), MetricsBucket.MQ_BUCKET, mqKeys).with(mqValues).observe(serverConverter.getDuration(), mqValues);
+                multiMetricsCall.newCounter(buildMetricName(type), mqKeys).with(mqValues).add(1, mqValues);
+                multiMetricsCall.newHistogram(buildMetricName(type, "TimeCost"), MetricsBucket.MQ_BUCKET, mqKeys).with(mqValues).observe(serverConverter.getDuration(), mqValues);
                 if (serverConverter.isError()) {
-                    multiMetricsCall.newCounter(formatMetricName(type, "Error"), mqKeys).with(mqValues).add(1, mqValues);
+                    multiMetricsCall.newCounter(buildMetricName(type, "Error"), mqKeys).with(mqValues).add(1, mqValues);
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(serverConverter));
                 } else {
-                    multiMetricsCall.newCounter(formatMetricName(type, "Success"), mqKeys).with(mqValues).add(1, mqValues);
+                    multiMetricsCall.newCounter(buildMetricName(type, "Success"), mqKeys).with(mqValues).add(1, mqValues);
                     if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getApplication())) {
-                        multiMetricsCall.newCounter(formatMetricName(type, "SlowConsume"), mqKeys).with(mqValues).add(1, mqValues);
+                        multiMetricsCall.newCounter(buildMetricName(type, "SlowConsume"), mqKeys).with(mqValues).add(1, mqValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(serverConverter));
                     }
                 }
@@ -90,14 +87,14 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                 String[] rpcKeys = tagKeys("serviceName", "methodName");
                 rpcMap = parseRPCServiceAndMethod(serverConverter);
                 String[] rpcValues = tagValues(serverConverter, rpcMap.get("rpcService"), rpcMap.get("rpcMethod"));
-                multiMetricsCall.newCounter(formatMetricName(type), rpcKeys).with(rpcValues).add(1, rpcValues);
-                multiMetricsCall.newHistogram(formatMetricName(type, "TimeCost"), MetricsBucket.DUBBO_BUCKET, rpcKeys).with(rpcValues).observe(serverConverter.getDuration(), rpcValues);
+                multiMetricsCall.newCounter(buildMetricName(type), rpcKeys).with(rpcValues).add(1, rpcValues);
+                multiMetricsCall.newHistogram(buildMetricName(type, "TimeCost"), MetricsBucket.DUBBO_BUCKET, rpcKeys).with(rpcValues).observe(serverConverter.getDuration(), rpcValues);
                 if (serverConverter.isError()) {
-                    multiMetricsCall.newCounter(formatMetricName(type, "Error"), rpcKeys).with(rpcValues).add(1, rpcValues);
+                    multiMetricsCall.newCounter(buildMetricName(type, "Error"), rpcKeys).with(rpcValues).add(1, rpcValues);
                 } else {
-                    multiMetricsCall.newCounter(formatMetricName(type, "Success"), rpcKeys).with(rpcValues).add(1, rpcValues);
+                    multiMetricsCall.newCounter(buildMetricName(type, "Success"), rpcKeys).with(rpcValues).add(1, rpcValues);
                     if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getApplication())) {
-                        multiMetricsCall.newCounter(formatMetricName(type, "SlowQuery"), rpcKeys).with(rpcValues).add(1, rpcValues);
+                        multiMetricsCall.newCounter(buildMetricName(type, "SlowQuery"), rpcKeys).with(rpcValues).add(1, rpcValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(serverConverter));
                     }
                 }
