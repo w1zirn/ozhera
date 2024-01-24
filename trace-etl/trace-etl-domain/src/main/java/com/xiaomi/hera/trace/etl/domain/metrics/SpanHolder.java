@@ -35,8 +35,6 @@ public class SpanHolder {
         setSpanType();
     }
 
-
-
     private void setSpanType() {
         if (span.getAttributes() == null) {
             this.spanType = SpanType.unknown;
@@ -167,6 +165,10 @@ public class SpanHolder {
         }
     }
 
+    public String getServerIp(){
+        return this.getSpan().getExtra().getIp();
+    }
+
     public SpanType getSpanType() {
         return spanType;
     }
@@ -180,7 +182,7 @@ public class SpanHolder {
     }
 
     public String getApplication() {
-        return application;
+        return getService().replaceAll("-","_");
     }
 
     public void setApplication(String application) {

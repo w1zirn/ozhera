@@ -22,19 +22,27 @@ public class OzHeraMetaDataServiceImpl implements OzHeraMetaDataService{
     }
 
     @Override
-    public HeraMetaDataModel getHeraMetaData(String serviceName) {
+    public HeraMetaDataModel getHeraMetaData(String peerIpPort) {
         return null;
     }
 
     @Override
     public HeraMetaDataModel getHeraMetaData(SpanHolder spanHolder) {
-        HeraMetaDataModel model = new HeraMetaDataModel();
-        switch (spanHolder.getSpanKind()){
-            case Client:
-                if(SpanType.http.equals(spanHolder.getSpanType())){
-                    Pair<String, String> hostAndOperation = attributeService.getHttpClientDestHostAndOperation(spanHolder);
-                }
-        }
         return null;
+    }
+
+    @Override
+    public String getMetricsMetaDataName(String peerIpPort) {
+        HeraMetaDataModel heraMetaData = getHeraMetaData(peerIpPort);
+        if(heraMetaData == null){
+            return null;
+        }
+        String destApp;
+        if(heraMetaData.getMetaId() == null){
+            destApp = heraMetaData.getMetaName().replaceAll("-", "_");
+        }else{
+            destApp = heraMetaData.getMetaId() + "_" + heraMetaData.getMetaName().replaceAll("-", "_");
+        }
+        return destApp;
     }
 }

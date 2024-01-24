@@ -12,7 +12,9 @@ public interface OzHeraMetaDataService {
 
     void syncHeraMetaData();
 
-    HeraMetaDataModel getHeraMetaData(String serviceName);
+    HeraMetaDataModel getHeraMetaData(String peerIpPort);
 
     HeraMetaDataModel getHeraMetaData(SpanHolder spanHolder);
+
+    String getMetricsMetaDataName(String peerIpPort);
 }

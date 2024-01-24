@@ -8,6 +8,6 @@ import org.apache.commons.lang3.tuple.Pair;
  */
 public interface AttributeService {
 
-    Pair<String, String> getHttpClientDestHostAndOperation(SpanHolder spanHolder);
+    String getHttpClientDestHost(SpanHolder spanHolder);
 
 }

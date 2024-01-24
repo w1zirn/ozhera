@@ -47,6 +47,7 @@ public class TraceAttributes {
      */
     public static final String MESSAGING_SYSTEM = "messaging.system";
     public static final String MESSAGING_DESTINATION = "messaging.destination";
+    public static final String MESSAGING_DESTINATION_NAME = "messaging.destination.name";
     public static final String MESSAGING_OPERATION = "messaging.operation";
 
 }
