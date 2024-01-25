@@ -6,13 +6,13 @@ import com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket;
 
 public class TopologyMetricsConverter extends BaseMetricsConverter {
 
-    public void convert(TopologyConverter topoConverter){
+    public void convert(TopologyConverter topologyConverter){
         String[] keys = tagKeys("application", "destApp", "type");
-        String[] values = tagValues(topoConverter, topoConverter.getSourceApp(), topoConverter.getDestApp(), topoConverter.getMetaDataType());
+        String[] values = tagValues(topologyConverter, topologyConverter.getSourceApp(), topologyConverter.getDestApp(), topologyConverter.getMetaDataType());
         multiMetricsCall.newHistogram("app_call_relation_latency_client", MetricsBucket.HTTP_BUCKET, keys)
                 .with(values)
-                .observe(topoConverter.getDuration(), values);
-        if (topoConverter.isError()) {
+                .observe(topologyConverter.getDuration(), values);
+        if (topologyConverter.isError()) {
             multiMetricsCall.newCounter("app_call_relation_error_count_client", keys)
                     .with(values)
                     .add(1, values);
