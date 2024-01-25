@@ -18,6 +18,7 @@ package run.mone.trace.etl.extension.es;
 import com.xiaomi.hera.trace.etl.api.service.DataSourceService;
 import com.xiaomi.hera.trace.etl.domain.DriverDomain;
 import com.xiaomi.hera.trace.etl.domain.ErrorTraceMessage;
+import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.tracequery.Trace;
 import com.xiaomi.hera.trace.etl.domain.tracequery.TraceIdQueryVo;
 import com.xiaomi.hera.trace.etl.domain.tracequery.TraceListQueryVo;
@@ -51,8 +52,8 @@ public class EsDataSourceService implements DataSourceService {
     }
 
     @Override
-    public void insertErrorTrace(ErrorTraceMessage errorTraceMessage) {
-        writeEsService.submitErrorEsTrace(errorTraceMessage);
+    public void insertErrorTrace(ErrorTraceSourceDomain errorTraceSourceDomain) {
+        writeEsService.submitErrorEsTrace(errorTraceSourceDomain);
     }
 
     @Override

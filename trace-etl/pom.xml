@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>run.mone</groupId>
     <artifactId>trace-etl</artifactId>
-    <version>1.0.1-jdk21</version>
+    <version>1.0.1-jdk21-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -39,6 +39,7 @@
         <springboot.version>2.7.15</springboot.version>
         <spring.version>5.3.29</spring.version>
         <junit.version>4.12</junit.version>
+        <guava.retrying.version>2.0.0</guava.retrying.version>
         <!-- Replace it with the absolute path of your own trace-etl project. issue#19-->
         <maven.jcommonDirectory>~</maven.jcommonDirectory>
     </properties>
@@ -113,6 +114,12 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.rholder</groupId>
+                <artifactId>guava-retrying</artifactId>
+                <version>${guava.retrying.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

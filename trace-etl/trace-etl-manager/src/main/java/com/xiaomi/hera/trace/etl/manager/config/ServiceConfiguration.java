@@ -18,10 +18,7 @@ package com.xiaomi.hera.trace.etl.manager.config;
 import com.xiaomi.hera.trace.etl.api.service.TraceEtlService;
 import com.xiaomi.hera.trace.etl.mapper.HeraTraceEtlConfigMapper;
 import com.xiaomi.hera.trace.etl.service.DubboManagerService;
-import com.xiaomi.hera.trace.etl.service.QueryEsService;
 import com.xiaomi.hera.trace.etl.service.api.ManagerService;
-import com.xiaomi.mone.es.EsClient;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -46,8 +43,4 @@ public class ServiceConfiguration {
         return new DubboManagerService(heraTraceEtlConfigMapper, traceEtlService);
     }
 
-    @Bean
-    public QueryEsService queryEsService() {
-        return new QueryEsService(esClient);
-    }
 }

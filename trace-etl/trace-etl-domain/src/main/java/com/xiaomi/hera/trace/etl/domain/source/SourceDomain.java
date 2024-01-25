@@ -13,11 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.constant;
+package com.xiaomi.hera.trace.etl.domain.source;
 
+import java.util.Map;
 
-public class LocalStorages {
+public interface SourceDomain {
 
-    public static volatile boolean talosIsShutDown = false;
+    String getPrefixIndex();
+
+    String getIndex();
+
+    Map<String, Object> getDataMap();
 
 }

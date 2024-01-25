@@ -28,6 +28,7 @@ import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerLogs;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerProcess;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerRefType;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerReferences;
+import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 import com.xiaomi.hera.trace.etl.util.ExecutorUtil;
 import com.xiaomi.hera.trace.etl.util.MessageUtil;
 import com.xiaomi.hera.tspandata.TAttributeKey;
@@ -91,21 +92,8 @@ public class WriteEsService {
         }
     }
 
-    public void submitErrorEsTrace(ErrorTraceMessage errorTraceMessage) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("domain", errorTraceMessage.getDomain());
-        map.put("type", errorTraceMessage.getType());
-        map.put("host", errorTraceMessage.getHost());
-        map.put("url", errorTraceMessage.getUrl());
-        map.put("dataSource", errorTraceMessage.getDataSource());
-        map.put("serviceName", errorTraceMessage.getServiceName());
-        map.put("traceId", errorTraceMessage.getTraceId());
-        map.put("timestamp", errorTraceMessage.getTimestamp());
-        map.put("duration", errorTraceMessage.getDuration());
-        // error timeout
-        map.put("errorType", errorTraceMessage.getErrorType());
-        map.put("errorCode", errorTraceMessage.getErrorCode());
-        map.put("serverEnv", errorTraceMessage.getServerEnv());
+    public void submitErrorEsTrace(ErrorTraceSourceDomain errorTraceSourceDomain) {
+        Map<String, Object> map = errorTraceSourceDomain.getDataMap();
         ExecutorUtil.submit(() -> {
             String format1 = DateTimeFormatter.ofPattern("yyyy.MM.dd").format(LocalDate.now());
             esTraceUtil.insertErrorBulk(errorIndexPrefix + format1, map);

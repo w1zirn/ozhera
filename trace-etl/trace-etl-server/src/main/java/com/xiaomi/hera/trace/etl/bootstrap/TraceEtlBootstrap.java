@@ -34,6 +34,7 @@ public class TraceEtlBootstrap {
         try {
             SpringApplication.run(TraceEtlBootstrap.class, args);
         } catch (Throwable throwable) {
+            throwable.printStackTrace();
             log.error(throwable.getMessage(), throwable);
             System.exit(-1);
         }

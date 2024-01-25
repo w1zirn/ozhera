@@ -26,6 +26,7 @@ import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerLogs;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerProcess;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerRefType;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerReferences;
+import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 import com.xiaomi.hera.trace.etl.util.MessageUtil;
 import com.xiaomi.hera.tspandata.TAttributeKey;
 import com.xiaomi.hera.tspandata.TAttributes;
@@ -129,21 +130,21 @@ public class WriteDorisService {
         }
     }
 
-    public void insertErrorTrace(ErrorTraceMessage errorTraceMessage) {
+    public void insertErrorTrace(ErrorTraceSourceDomain errorTraceSourceDomain) {
         Map<String, Object> data = new HashMap<>();
-        data.put(HeraErrorSlowTraceColumn.DOMAIN, errorTraceMessage.getDomain());
-        data.put(HeraErrorSlowTraceColumn.TYPE, errorTraceMessage.getType());
-        data.put(HeraErrorSlowTraceColumn.HOST, errorTraceMessage.getHost());
-        data.put(HeraErrorSlowTraceColumn.URL, errorTraceMessage.getUrl());
-        data.put(HeraErrorSlowTraceColumn.DATA_SOURCE, errorTraceMessage.getDataSource());
-        data.put(HeraErrorSlowTraceColumn.SERVICE_NAME, errorTraceMessage.getServiceName());
-        data.put(HeraErrorSlowTraceColumn.TRACE_ID, errorTraceMessage.getTraceId());
-        data.put(HeraErrorSlowTraceColumn.TIME_STAMP, errorTraceMessage.getTimestamp());
-        data.put(HeraErrorSlowTraceColumn.DURATION, errorTraceMessage.getDuration());
+        data.put(HeraErrorSlowTraceColumn.DOMAIN, errorTraceSourceDomain.getDomain());
+        data.put(HeraErrorSlowTraceColumn.TYPE, errorTraceSourceDomain.getType());
+        data.put(HeraErrorSlowTraceColumn.HOST, errorTraceSourceDomain.getHost());
+        data.put(HeraErrorSlowTraceColumn.URL, errorTraceSourceDomain.getUrl());
+        data.put(HeraErrorSlowTraceColumn.DATA_SOURCE, errorTraceSourceDomain.getDataSource());
+        data.put(HeraErrorSlowTraceColumn.SERVICE_NAME, errorTraceSourceDomain.getServiceName());
+        data.put(HeraErrorSlowTraceColumn.TRACE_ID, errorTraceSourceDomain.getTraceId());
+        data.put(HeraErrorSlowTraceColumn.TIME_STAMP, errorTraceSourceDomain.getTimestamp());
+        data.put(HeraErrorSlowTraceColumn.DURATION, errorTraceSourceDomain.getDuration());
         // error timeout
-        data.put(HeraErrorSlowTraceColumn.ERROR_TYPE, errorTraceMessage.getErrorType());
-        data.put(HeraErrorSlowTraceColumn.ERROR_CODE, errorTraceMessage.getErrorCode());
-        data.put(HeraErrorSlowTraceColumn.SERVER_ENV, errorTraceMessage.getServerEnv());
+        data.put(HeraErrorSlowTraceColumn.ERROR_TYPE, errorTraceSourceDomain.getErrorType());
+        data.put(HeraErrorSlowTraceColumn.ERROR_CODE, errorTraceSourceDomain.getErrorCode());
+        data.put(HeraErrorSlowTraceColumn.SERVER_ENV, errorTraceSourceDomain.getServerEnv());
         try {
             dorisService.send(HeraTraceTable.HERA_ERROR_SLOW_TRACE_TABLE, TRACE_ERROR_SLOW_TRACE_COLUMN, data);
         } catch (Exception e) {
