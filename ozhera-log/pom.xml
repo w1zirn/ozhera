@@ -4,10 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>run.mone</groupId>
+        <artifactId>ozhera</artifactId>
+        <version>1.4.0-jdk21-SNAPSHOT</version>
+    </parent>
+
     <groupId>run.mone</groupId>
     <artifactId>ozhera-log</artifactId>
+    <version>1.4.0-jdk21</version>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+
     <modules>
         <module>log-manager</module>
         <module>log-agent</module>
@@ -22,69 +29,10 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <docean-plugin.common.version>1.4.0</docean-plugin.common.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean</artifactId>
-                <version>1.4.0</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-config</artifactId>
-                <version>${docean-plugin.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-configuration</artifactId>
-                <version>${docean-plugin.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-dubbo</artifactId>
-                <version>${docean-plugin.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-db</artifactId>
-                <version>${docean-plugin.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-nacos</artifactId>
-                <version>${docean-plugin.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-es</artifactId>
-                <version>${docean-plugin.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-es-antlr4</artifactId>
-                <version>${docean-plugin.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-mybatis-plus</artifactId>
-                <version>${docean-plugin.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-rocketmq</artifactId>
-                <version>1.4.1</version>
-            </dependency>
-
-
-
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>2.17.0</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-1.2-api</artifactId>
@@ -97,39 +45,11 @@
             </dependency>
 
             <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.10.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>32.1.1-jre</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.30</version>
-            </dependency>
-
-            <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>5.8.20</version>
             </dependency>
 
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>hera-trace</artifactId>
-                <version>1.4.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.8.1</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -138,7 +58,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
         </dependency>
 
         <dependency>
@@ -190,87 +109,59 @@
                 </configuration>
             </plugin>
 
-<!--            <plugin>-->
-<!--                <groupId>run.mone</groupId>-->
-<!--                <artifactId>codecheck-maven-plugin</artifactId>-->
-<!--                <version>1.4-SNAPSHOT</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>validate</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>pmd</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <checkConfigurationFile>false</checkConfigurationFile>-->
-<!--                    <ipWhite>-->
-<!--                        <param>127.0.0.1</param>-->
-<!--                    </ipWhite>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!-- To package the source code, you need to add this plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>license-maven-plugin</artifactId>-->
-<!--                <version>2.0.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>license-check</id>-->
-<!--                        <phase>generate-sources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>add-third-party</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <includeOptional>false</includeOptional>-->
-<!--                            <useMissingFile>false</useMissingFile>-->
-<!--                            <failOnMissing>false</failOnMissing>-->
-<!--                            <licenseMerges>-->
-<!--                                <licenseMerge>Apache License, Version 2.0|The Apache Software License, Version-->
-<!--                                    2.0|ASF 2.0|Apache 2|Apache-2.0|Apache 2.0 License|Apache 2.0|Apache License v2.0|Apache License 2.0|The Apache License, Version 2.0|The Apache Software License, Version 2.0-->
-<!--                                </licenseMerge>-->
-<!--                                <licenseMerge>The MIT License|MIT License</licenseMerge>-->
-<!--                                <licenseMerge>The 3-Clause BSD License|New BSD License|3-Clause BSD-->
-<!--                                    License|BSD|3-Clause BSD License|The New BSD License-->
-<!--                                </licenseMerge>-->
-<!--                            </licenseMerges>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-<!--            <plugin>-->
-<!--                <groupId>com.mycila</groupId>-->
-<!--                <artifactId>license-maven-plugin</artifactId>-->
-<!--                <version>3.0</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>generate-sources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>check</goal>-->
-<!--                            <goal>remove</goal>-->
-<!--                            <goal>format</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <quiet>true</quiet>-->
-<!--                    <header>${user.dir}/HEADER</header>-->
-<!--                    <excludes>-->
-<!--                        <exclude>src/main/java/com/mycila</exclude>-->
-<!--                    </excludes>-->
-<!--                    <includes>-->
-<!--                        <include>src/main/java/com/xiaomi/mone/**</include>-->
-<!--                        <include>**/src/test/java/**</include>-->
-<!--                    </includes>-->
-<!--                    <strictCheck>true</strictCheck>-->
-<!--                    <mapping>-->
-<!--                        <java>SLASHSTAR_STYLE</java>-->
-<!--                    </mapping>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <keyname>your key name</keyname>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-
 
     </build>
 
@@ -284,4 +175,5 @@
             <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
 </project>

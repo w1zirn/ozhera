@@ -5,10 +5,9 @@
     <parent>
         <groupId>run.mone</groupId>
         <artifactId>ozhera-log</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.4.0-jdk21</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>1.3-SNAPSHOT</version>
 
     <artifactId>log-manager</artifactId>
 
@@ -18,41 +17,34 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>3.1.4</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>nacos</artifactId>
-            <version>1.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <artifactId>mi-tpclogin-sdk</artifactId>
             <groupId>run.mone</groupId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>5.3.25</version>
-        </dependency>
-
-        <dependency>
-            <groupId>run.mone</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>1.0.10-mone-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>dubbo</artifactId>
-            <version>2.7.12-mone-v8-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba.spring</groupId>
@@ -67,19 +59,24 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jbpt</groupId>
-            <artifactId>jbpt-petri</artifactId>
-            <version>0.3.1</version>
-        </dependency>
-        <dependency>
             <groupId>run.mone</groupId>
             <artifactId>docean-plugin-configuration</artifactId>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
+            <artifactId>app-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>run.mone</groupId>
             <artifactId>excel</artifactId>
-            <version>1.4-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>run.mone</groupId>
@@ -103,6 +100,12 @@
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>docean-plugin-db</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -117,10 +120,20 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>run.mone</groupId>
             <artifactId>es</artifactId>
-            <version>1.5-SNAPSHOT</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -149,36 +162,31 @@
             <groupId>run.mone</groupId>
             <artifactId>docean-plugin-mybatis-plus</artifactId>
         </dependency>
+
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>log-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.5</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.68-open-SNAPSHOT</version>
         </dependency>
         <!-- Internal dependencies -->
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>log-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-acl</artifactId>
-            <version>4.9.4</version>
         </dependency>
-
 
         <dependency>
             <groupId>run.mone</groupId>
@@ -188,7 +196,6 @@
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
-            <version>4.9.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -217,35 +224,21 @@
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.mapstruct</groupId>-->
-        <!--            <artifactId>mapstruct-jdk8</artifactId>-->
-        <!--            <version>${mapstruct.version}</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.mapstruct</groupId>-->
-        <!--            <artifactId>mapstruct-processor</artifactId>-->
-        <!--            <version>${mapstruct.version}</version>-->
-        <!--        </dependency>-->
 
-        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.9.1</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>feishu</artifactId>
-            <version>1.4-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <artifactId>mi-tpc-api</artifactId>
             <groupId>run.mone</groupId>
-            <version>1.0.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.projectlombok</groupId>
@@ -261,7 +254,6 @@
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>app-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.projectlombok</groupId>
@@ -271,9 +263,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-lgpl</artifactId>
-            <version>1.9.6</version>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
         </dependency>
 
     </dependencies>

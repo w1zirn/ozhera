@@ -6,13 +6,16 @@
     <parent>
         <groupId>run.mone</groupId>
         <artifactId>trace-etl</artifactId>
-        <version>1.0.0-jdk21-SNAPSHOT</version>
+        <version>1.0.1-jdk21</version>
     </parent>
 
     <artifactId>trace-etl-extensions</artifactId>
     <packaging>pom</packaging>
     <modules>
         <module>trace-etl-rocketmq-extension</module>
+        <module>trace-etl-kafka-extension</module>
+        <module>trace-etl-doris-extension</module>
+        <module>trace-etl-es-extension</module>
     </modules>
 
     <properties>

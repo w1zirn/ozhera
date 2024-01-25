@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ozhera-prometheus-agent</artifactId>
         <groupId>run.mone</groupId>
-        <version>1.0.0-jdk21-SNAPSHOT</version>
+        <version>1.0.0-jdk21</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,13 +17,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>5.3.29</version>
         </dependency>
 
         <dependency>
-            <artifactId>ozhera-prometheus-agent-api</artifactId>
             <groupId>run.mone</groupId>
-            <version>1.0.0-jdk21-SNAPSHOT</version>
+            <artifactId>ozhera-prometheus-agent-api</artifactId>
+            <version>${project.parent.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-codec</artifactId>
@@ -33,15 +32,14 @@
         </dependency>
 
         <dependency>
-            <artifactId>ozhera-prometheus-agent-common</artifactId>
             <groupId>run.mone</groupId>
-            <version>1.0.0-jdk21-SNAPSHOT</version>
+            <artifactId>ozhera-prometheus-agent-common</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>dubbo</artifactId>
-            <version>2.7.12-mone-v8-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba.spring</groupId>
@@ -54,7 +52,6 @@
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>feishu</artifactId>
-            <version>1.4-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
@@ -62,16 +59,17 @@
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>ozhera-prometheus-agent-dao</artifactId>
-            <version>1.0.0-jdk21-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
+
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>nutz</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-spring-context</artifactId>
-            <version>0.2.2-RC1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba.spring</groupId>
@@ -80,33 +78,50 @@
             </exclusions>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>io.kubernetes</groupId>
             <artifactId>client-java-extended</artifactId>
             <version>10.0.1</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>dingtalk</artifactId>
-            <version>2.0.14</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>alibaba-dingtalk-service-sdk</artifactId>
-            <version>2.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcutil-jdk15on</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
         </dependency>
 
         <dependency>
-            <artifactId>http</artifactId>
             <groupId>run.mone</groupId>
+            <artifactId>http</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
 
 

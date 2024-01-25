@@ -23,6 +23,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author wtt
  * @version 1.0
@@ -49,9 +51,11 @@ public class SinkJobConfig extends LogConfig {
     private String tail;
     private String storageType;
     private StorageInfo storageInfo;
+    private List<String> columnList;
     private Integer parseType;
     /**
      * @see SinkJobEnum#name()
      */
     private String jobType;
+    private String consumerGroup;
 }

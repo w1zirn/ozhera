@@ -1,7 +1,23 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.mone.hera.demo.client.controller;
 
 import com.xiaomi.hera.trace.annotation.Trace;
 import com.xiaomi.mone.hera.demo.client.api.service.DubboHealthService;
+import com.xiaomi.mone.hera.demo.client.grpc.GrpcClientService;
 import com.xiaomi.mone.hera.demo.client.util.HttpClientUtil;
 import com.xiaomi.youpin.prometheus.all.client.Metrics;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +44,8 @@ public class TestController {
     @Autowired
     private DubboHealthService dubboHealthService;
     @Autowired
+    private GrpcClientService grpcClientService;
+    @Autowired
     private JedisPool jedisPooled;
 
     @PostConstruct
@@ -39,6 +57,7 @@ public class TestController {
                     sendGETReuqest("http://localhost:8085/remotehealth2");
                     sendGETReuqest("http://localhost:8085/testError");
                     sendGETReuqest("http://localhost:8085/customizedMetrics");
+                    sendGETReuqest("http://localhost:8085/grpcTest");
                 },
                 0,
                 15,
@@ -100,6 +119,14 @@ public class TestController {
         long duration = System.currentTimeMillis() - l;
         Metrics.getInstance().newHistogram("test_histogram",buckets).observe(duration);
         Metrics.getInstance().newGauge("test_gauge").set(duration);
+        return "ok";
+    }
+
+    @GetMapping("/grpcTest")
+    public Object grpcTest() {
+        grpcClientService.grpcNormal("ok");
+        grpcClientService.grpcSlow("ok");
+        grpcClientService.grpcError("ok");
         return "ok";
     }
 

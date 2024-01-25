@@ -29,7 +29,7 @@
 ],
 "http_sd_configs": [
 {
-"url": "http://prometheus-agent:8080/prometheus/getK8sNodeIp?type=container"
+"url": "http://prometheus-agent.ozhera-namespace:8080/prometheus/getK8sNodeIp?type=container"
 }
 ],
 "metric_relabel_configs": [
@@ -122,6 +122,11 @@
 "regex": "(.+)",
 "replacement": "$1",
 "action": "replace"
+},
+{
+"source_labels": ["__name__"],
+"regex":"container_network_(advance_tcp_stats_total|tcp6_usage_total|tcp_usage_total)",
+"action":"drop"
 },
 {
 "regex": "(container_label_io_kubernetes_container_name|container_label_io_kubernetes_pod_name|container_label_io_kubernetes_pod_namespace|id|container_env_application|container_env_serverenv|container_env_project_id|container_env_env_id|container_label_annotation_io_kubernetes_container_restartCount|container_env_pod_ip|container_env_serverEnv)",

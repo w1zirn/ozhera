@@ -5,7 +5,7 @@
     <parent>
         <artifactId>trace-etl</artifactId>
         <groupId>run.mone</groupId>
-        <version>1.0.0-jdk21-SNAPSHOT</version>
+        <version>1.0.1-jdk21</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,19 +18,19 @@
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>trace-etl-api</artifactId>
-            <version>${trace.etl.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>trace-etl-common</artifactId>
-            <version>${trace.etl.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>trace-etl-dao</artifactId>
-            <version>${trace.etl.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
@@ -81,6 +81,15 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_httpserver</artifactId>
@@ -137,24 +146,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>run.mone</groupId>
-            <artifactId>es</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpclient</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore-nio</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
@@ -174,17 +165,6 @@
         <dependency>
             <groupId>org.rocksdb</groupId>
             <artifactId>rocksdbjni</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.rocketmq</groupId>
-            <artifactId>rocketmq-client</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>fastjson</artifactId>
-                    <groupId>com.alibaba</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

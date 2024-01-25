@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.youpin.prometheus.agent.test;
 
 /**
@@ -12,13 +27,19 @@ import com.xiaomi.youpin.prometheus.agent.enums.RuleSilenceStatusEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.TimeZone;
 
 public class RuleSilenceTest {
-    @Test
+   /* @Test
     public void insertSilenceDb() {
         RuleSilenceEntity entity = new RuleSilenceEntity();
         entity.setUuid("uuid");
@@ -36,4 +57,21 @@ public class RuleSilenceTest {
        // Long silenceDbId = dao.CreateSilence(entity);
        // System.out.println("db insert id:" + silenceDbId);
     }
+
+    @Test
+    public void test() {
+        RestTemplate restTemplate = new RestTemplate();
+        String result = null;
+        try {
+            String url = "";
+            String prometheusHeaderToken = "";
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", prometheusHeaderToken);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            result = response.getBody();
+        } catch (RestClientException e) {
+            System.out.println(e.getMessage());
+        }
+    }*/
 }

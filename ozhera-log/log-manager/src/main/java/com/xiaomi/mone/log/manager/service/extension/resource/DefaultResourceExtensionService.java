@@ -17,18 +17,20 @@ package com.xiaomi.mone.log.manager.service.extension.resource;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
+import com.xiaomi.mone.log.api.enums.MQSourceEnum;
 import com.xiaomi.mone.log.api.enums.MiddlewareEnum;
 import com.xiaomi.mone.log.api.model.bo.MiLogResource;
 import com.xiaomi.mone.log.api.model.vo.ResourceUserSimple;
 import com.xiaomi.mone.log.manager.common.context.MoneUserContext;
+import com.xiaomi.mone.log.manager.dao.MilogSpaceDao;
 import com.xiaomi.mone.log.manager.model.pojo.*;
-import com.xiaomi.mone.log.manager.service.impl.RocketMqConfigService;
 import com.xiaomi.youpin.docean.anno.Service;
-import com.xiaomi.youpin.docean.common.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,7 +49,7 @@ import static com.xiaomi.mone.log.manager.service.extension.resource.ResourceExt
 public class DefaultResourceExtensionService implements ResourceExtensionService {
 
     @Resource
-    private RocketMqConfigService mqConfigService;
+    private MilogSpaceDao logSpaceDao;
 
     @Override
     public List<MilogMiddlewareConfig> userShowAuthority(List<MilogMiddlewareConfig> configList) {
@@ -78,9 +80,9 @@ public class DefaultResourceExtensionService implements ResourceExtensionService
 
     @Override
     public void addResourceMiddleProcessing(MiLogResource miLogResource) {
-        mqConfigService.createCommonTagTopic(miLogResource.getAk(), miLogResource.getSk(), miLogResource.getClusterName(),
-                miLogResource.getServiceUrl(), StringUtils.EMPTY, miLogResource.getOrgId(),
-                miLogResource.getBrokerName());
+//        mqConfigService.createCommonTagTopic(miLogResource.getAk(), miLogResource.getSk(), miLogResource.getClusterName(),
+//                miLogResource.getServiceUrl(), StringUtils.EMPTY, miLogResource.getOrgId(),
+//                miLogResource.getBrokerName());
     }
 
     @Override
@@ -103,7 +105,7 @@ public class DefaultResourceExtensionService implements ResourceExtensionService
         if (MoneUserContext.getCurrentUser().getIsAdmin()) {
             return middlewareConfigs.stream().filter(milogMiddlewareConfig -> Objects.equals(YES, milogMiddlewareConfig.getIsDefault())).collect(Collectors.toList());
         }
-        return middlewareConfigs.stream().filter(milogMiddlewareConfig -> !Objects.equals(YES, milogMiddlewareConfig.getIsDefault())).collect(Collectors.toList());
+        return middlewareConfigs;
     }
 
     @Override
@@ -135,7 +137,26 @@ public class DefaultResourceExtensionService implements ResourceExtensionService
 
     @Override
     public List<Integer> getMqResourceCodeList() {
-        return Lists.newArrayList(MiddlewareEnum.ROCKETMQ.getCode(), MiddlewareEnum.KAFKA.getCode());
+        return Arrays.stream(MQSourceEnum.values()).map(MQSourceEnum::getCode).collect(Collectors.toList());
+    }
+
+    @Override
+    public String queryHostName(String ip) {
+        return ip;
+    }
+
+    @Override
+    public List<Long> getSpaceIdsByNameExcluded(String spaceName) {
+        List<Long> spaceIds;
+        if (StringUtils.isNotBlank(spaceName)) {
+            List<MilogSpaceDO> spaceDOS = logSpaceDao.queryByName(spaceName);
+            spaceIds = spaceDOS.stream()
+                    .map(MilogSpaceDO::getId)
+                    .toList();
+        } else {
+            spaceIds = logSpaceDao.getAll().stream().map(MilogSpaceDO::getId).collect(Collectors.toList());
+        }
+        return spaceIds;
     }
 
 }

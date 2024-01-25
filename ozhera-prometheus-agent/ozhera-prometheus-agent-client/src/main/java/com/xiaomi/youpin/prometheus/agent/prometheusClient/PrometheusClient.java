@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.youpin.prometheus.agent.prometheusClient;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
@@ -18,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -33,7 +49,6 @@ import static com.xiaomi.youpin.prometheus.agent.Commons.HTTP_GET;
 import static com.xiaomi.youpin.prometheus.agent.Commons.HTTP_POST;
 
 @Slf4j
-@Service
 public class PrometheusClient implements Client {
 
     @NacosValue(value = "${job.prometheus.healthAddr}", autoRefreshed = true)
@@ -63,6 +78,7 @@ public class PrometheusClient implements Client {
 
     @PostConstruct
     public void init() {
+        log.info("PrometheusLocalClient begin init!");
         backFilePath = filePath + ".bak";
         if (enabled.equals("true")) {
             // Initialization, request the health interface to verify if it is available.
@@ -87,7 +103,7 @@ public class PrometheusClient implements Client {
     @Override
     public void GetLocalConfigs() {
         // Get all pending collection tasks from the db every 30 seconds.
-        new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> {
+        new ScheduledThreadPoolExecutor(1).scheduleWithFixedDelay(() -> {
             try {
 
                 log.info("PrometheusClient start GetLocalConfigs");
@@ -120,7 +136,7 @@ public class PrometheusClient implements Client {
     @SneakyThrows
     public void CompareAndReload() {
 
-        new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> {
+        new ScheduledThreadPoolExecutor(1).scheduleWithFixedDelay(() -> {
             try {
 
                 if (localConfigs.size() <= 0) {

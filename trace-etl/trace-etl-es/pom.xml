@@ -5,7 +5,7 @@
     <parent>
         <artifactId>trace-etl</artifactId>
         <groupId>run.mone</groupId>
-        <version>1.0.0-jdk21-SNAPSHOT</version>
+        <version>1.0.1-jdk21</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,19 +14,8 @@
     <dependencies>
 
         <dependency>
-            <groupId>run.mone</groupId>
-            <artifactId>trace-etl-service</artifactId>
-            <version>${trace.etl.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.xiaomi.youpin</groupId>
-                    <artifactId>prometheus-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>io.prometheus</groupId>
-                    <artifactId>simpleclient_httpserver</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
         </dependency>
 
         <dependency>
@@ -44,6 +33,28 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>trace-etl-kafka-extension</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>trace-etl-rocketmq-extension</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>trace-etl-doris-extension</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>trace-etl-es-extension</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

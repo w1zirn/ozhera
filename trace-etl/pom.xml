@@ -3,23 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+    <parent>
+        <groupId>run.mone</groupId>
+        <artifactId>ozhera</artifactId>
+        <version>1.4.0-jdk21-SNAPSHOT</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>run.mone</groupId>
     <artifactId>trace-etl</artifactId>
-    <version>1.0.0-jdk21-SNAPSHOT</version>
+    <version>1.0.1-jdk21</version>
     <packaging>pom</packaging>
-
-    <name>${project.artifactId}</name>
-    <description>The parent project of jcommon</description>
-    <url>https://github.com/XiaoMi/mone</url>
-    <inceptionYear>2020</inceptionYear>
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
 
     <modules>
         <module>trace-etl-api</module>
@@ -45,43 +39,6 @@
         <springboot.version>2.7.15</springboot.version>
         <spring.version>5.3.29</spring.version>
         <junit.version>4.12</junit.version>
-        <feign.version>10.1.0</feign.version>
-        <jcommon.version>1.4-jdk21-SNAPSHOT</jcommon.version>
-        <commons.lang3.version>3.11</commons.lang3.version>
-        <fastjson.version>2.0.25</fastjson.version>
-        <joda-time.version>2.10.5</joda-time.version>
-        <prometheus-trace-etl.version>0.0.6-SNAPSHOT</prometheus-trace-etl.version>
-        <hera.tspandata.version>2.0-SNAPSHOT</hera.tspandata.version>
-        <mysql-connector-java.version>8.0.17</mysql-connector-java.version>
-        <mybatis.springboot.starter.version>2.1.0</mybatis.springboot.starter.version>
-        <mybatis.generator.core.version>1.3.5</mybatis.generator.core.version>
-        <pagehelper.version>5.0.0</pagehelper.version>
-        <c3p0.version>0.9.5.2</c3p0.version>
-        <guava.retrying.version>2.0.0</guava.retrying.version>
-        <guava.version>33.0.0-jre</guava.version>
-        <docean.version>1.4-jdk20-SNAPSHOT</docean.version>
-        <docean.jdk8.version>1.4-SNAPSHOT</docean.jdk8.version>
-        <okio.version>3.5.0</okio.version>
-        <dubbo.version>2.7.12-mone-v8-SNAPSHOT</dubbo.version>
-        <simpleclient.version>0.10.0</simpleclient.version>
-        <spring.context.support.version>1.0.10-mone-SNAPSHOT</spring.context.support.version>
-        <dubbo.registry.nacos.version>1.2.1-mone-SNAPSHOT</dubbo.registry.nacos.version>
-        <nacos.client.version>1.2.1-mone-v3-SNAPSHOT</nacos.client.version>
-        <nacos.spring.context.version>0.3.3</nacos.spring.context.version>
-        <mone.es.version>1.5-SNAPSHOT</mone.es.version>
-        <http.client.version>4.5.12</http.client.version>
-        <http.client.core.version>4.4.13</http.client.core.version>
-        <jedis.version>4.2.0</jedis.version>
-        <rocksdb.version>7.0.3</rocksdb.version>
-        <rocketmq.version>4.9.4</rocketmq.version>
-        <mone.log.version>1.7-SNAPSHOT</mone.log.version>
-        <javassist.version>3.21.0-GA</javassist.version>
-        <jackson.version>2.13.5</jackson.version>
-        <tspandata.version>2.0-SNAPSHOT</tspandata.version>
-        <mone.common.version>1.7.1-SNAPSHOT</mone.common.version>
-        <tpc.login.version>1.0.0-SNAPSHOT</tpc.login.version>
-        <ozhera.app.version>1.4-jdk21-SNAPSHOT</ozhera.app.version>
-
         <!-- Replace it with the absolute path of your own trace-etl project. issue#19-->
         <maven.jcommonDirectory>~</maven.jcommonDirectory>
     </properties>
@@ -89,74 +46,29 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>app-api</artifactId>
-                <version>${ozhera.app.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>mi-tpclogin-sdk</artifactId>
-                <version>${tpc.login.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>common</artifactId>
-                <version>${mone.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>infra-result</artifactId>
-                <version>${docean.jdk8.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>ozhera-tspandata</artifactId>
-                <version>${tspandata.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>${javassist.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>log</artifactId>
-                <version>${mone.log.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.rocketmq</groupId>
-                <artifactId>rocketmq-client</artifactId>
-                <version>${rocketmq.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.rocksdb</groupId>
                 <artifactId>rocksdbjni</artifactId>
-                <version>${rocksdb.version}</version>
+                <version>7.0.3</version>
             </dependency>
             <dependency>
-                <groupId>redis.clients</groupId>
-                <artifactId>jedis</artifactId>
-                <version>${jedis.version}</version>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_httpserver</artifactId>
+                <version>0.10.0</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${http.client.core.version}</version>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>0.9.5.2</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore-nio</artifactId>
-                <version>${http.client.core.version}</version>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${http.client.version}</version>
+                <groupId>run.mone</groupId>
+                <artifactId>prometheus-trace-etl</artifactId>
+                <version>0.0.6-jdk21</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -165,52 +77,13 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-to-slf4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${springboot.version}</version>
             </dependency>
 
             <dependency>
@@ -222,16 +95,6 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
@@ -251,170 +114,8 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons.lang3.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>http</artifactId>
-                <version>${jcommon.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>prometheus-trace-etl</artifactId>
-                <version>${prometheus-trace-etl.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>hera-tspandata</artifactId>
-                <version>${hera.tspandata.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <scope>runtime</scope>
-                <version>${mysql-connector-java.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis.springboot.starter.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mybatis.generator</groupId>
-                <artifactId>mybatis-generator-core</artifactId>
-                <version>${mybatis.generator.core.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>${pagehelper.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.mchange</groupId>
-                <artifactId>c3p0</artifactId>
-                <version>${c3p0.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.github.rholder</groupId>
-                <artifactId>guava-retrying</artifactId>
-                <version>${guava.retrying.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-spring-starter</artifactId>
-                <version>${docean.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean</artifactId>
-                <version>${docean.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>docean-plugin-spring</artifactId>
-                <version>${docean.jdk8.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.squareup.okio</groupId>
-                <artifactId>okio</artifactId>
-                <version>${okio.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>dubbo</artifactId>
-                <version>${dubbo.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient</artifactId>
-                <version>${simpleclient.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_httpserver</artifactId>
-                <version>${simpleclient.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${spring.context.support.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>dubbo-registry-nacos</artifactId>
-                <version>${dubbo.registry.nacos.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>${nacos.client.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-spring-context</artifactId>
-                <version>${nacos.spring.context.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>run.mone</groupId>
-                <artifactId>es</artifactId>
-                <version>${mone.es.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <plugins>
@@ -454,6 +155,60 @@
                     <source>21</source>
                     <target>21</target>
                 </configuration>
+            </plugin>
+
+            <!-- To package the source code, you need to add this plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+<!--                        <configuration>-->
+<!--                            <executable>gpg</executable>-->
+<!--                            <keyname>your-gpg-key</keyname>-->
+<!--                        </configuration>-->
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

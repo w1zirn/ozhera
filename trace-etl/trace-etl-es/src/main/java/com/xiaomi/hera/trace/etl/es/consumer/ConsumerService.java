@@ -1,13 +1,28 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.hera.trace.etl.es.consumer;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.google.common.base.Joiner;
+import com.xiaomi.hera.trace.etl.api.service.DataSourceService;
 import com.xiaomi.hera.trace.etl.es.domain.FilterResult;
 import com.xiaomi.hera.trace.etl.es.domain.LocalStorages;
 import com.xiaomi.hera.trace.etl.es.queue.impl.RocksdbStoreServiceImpl;
 import com.xiaomi.hera.trace.etl.es.queue.impl.TeSnowFlake;
 import com.xiaomi.hera.trace.etl.es.util.bloomfilter.TraceIdRedisBloomUtil;
-import com.xiaomi.hera.trace.etl.service.WriteEsService;
 import com.xiaomi.hera.trace.etl.util.ExecutorUtil;
 import com.xiaomi.hera.trace.etl.util.MessageUtil;
 import com.xiaomi.hera.trace.etl.util.ThriftUtil;
@@ -58,7 +73,7 @@ public class ConsumerService {
     @Autowired
     private FilterService filterService;
     @Autowired
-    private WriteEsService writeEsService;
+    private DataSourceService writeEsService;
     @Autowired
     private TeSnowFlake snowFlake;
 
@@ -110,7 +125,7 @@ public class ConsumerService {
             if (tSpanData != null) {
                 if (traceIdRedisBloomUtil.isExistLocal(split[0])) {
                     // write into es
-                    writeEsService.insertJaegerSpan(tSpanData, split[1], split[2]);
+                    writeEsService.insertHeraSpan(tSpanData, split[1], split[2]);
                 } else if (RocksdbStoreServiceImpl.FIRST_ORDER.equals(order)) {
                     insertRocks(split[0], split[1], split[2], tSpanData, RocksdbStoreServiceImpl.SECOND_ORDER);
                 }
@@ -158,7 +173,7 @@ public class ConsumerService {
                     traceIdRedisBloomUtil.addBatch(traceId);
                 }
                 // write into es
-                writeEsService.insertJaegerSpan(tSpanData, serviceName, spanName);
+                writeEsService.insertHeraSpan(tSpanData, serviceName, spanName);
             } else {
                 insertRocks(traceId, serviceName, spanName, tSpanData, RocksdbStoreServiceImpl.FIRST_ORDER);
             }

@@ -1,10 +1,27 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.mone.log.agent.channel;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.xiaomi.data.push.common.SafeRun;
 import com.xiaomi.mone.file.MLog;
+import com.xiaomi.mone.file.ReadListener;
 import com.xiaomi.mone.file.ReadResult;
+import com.xiaomi.mone.file.common.FileInfo;
 import com.xiaomi.mone.file.common.FileInfoCache;
 import com.xiaomi.mone.file.listener.DefaultMonitorListener;
 import com.xiaomi.mone.file.ozhera.HeraFileMonitor;
@@ -24,12 +41,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -84,6 +100,8 @@ public class WildcardChannelServiceImpl extends AbstractChannelService {
 
     private ReentrantLock reentrantLock = new ReentrantLock();
 
+    private DefaultMonitorListener defaultMonitorListener;
+
 
     public WildcardChannelServiceImpl(MsgExporter msgExporter, AgentMemoryService memoryService,
                                       ChannelDefine channelDefine, FilterChain chain, String memoryBasePath) {
@@ -122,7 +140,7 @@ public class WildcardChannelServiceImpl extends AbstractChannelService {
     private void startCollectFile(Long channelId, Input input, String ip) {
         try {
             // Load the restart file
-            String restartFile = buildRestartFilePath(channelId);
+            String restartFile = buildRestartFilePath();
             FileInfoCache.ins().load(restartFile);
 
             HeraFileMonitor monitor = createFileMonitor(input.getPatternCode(), ip);
@@ -148,12 +166,39 @@ public class WildcardChannelServiceImpl extends AbstractChannelService {
 
     private void saveCollProgress() {
         ExecutorUtil.scheduleAtFixedRate(() -> SafeRun.run(() -> {
-            FileInfoCache.ins().shutdown();
-        }), 10, 30, TimeUnit.SECONDS);
+            try {
+                for (ReadListener readListener : defaultMonitorListener.getReadListenerList()) {
+                    readListener.saveProgress();
+                }
+                cleanUpInvalidFileInfos();
+                FileInfoCache.ins().shutdown();
+            } catch (Exception e) {
+                log.error("saveCollProgress error", e);
+            }
+        }), 60, 30, TimeUnit.SECONDS);
     }
 
-    private String buildRestartFilePath(Long channelId) {
-        return String.format("%s%s%s%s", memoryBasePath, MEMORY_DIR, POINTER_FILENAME_PREFIX, channelId);
+    // 清理无效的文件信息的方法
+    private void cleanUpInvalidFileInfos() {
+        ConcurrentMap<String, FileInfo> caches = FileInfoCache.ins().caches();
+
+        for (Iterator<Map.Entry<String, FileInfo>> iterator = caches.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<String, FileInfo> entry = iterator.next();
+            FileInfo fileInfo = entry.getValue();
+            File file = new File(fileInfo.getFileName());
+
+            if (StringUtils.isEmpty(fileInfo.getFileName())) {
+                continue;
+            }
+
+            if (!file.exists()) {
+                FileInfoCache.ins().remove(entry.getKey());
+            }
+        }
+    }
+
+    private String buildRestartFilePath() {
+        return String.format("%s%s%s", memoryBasePath, MEMORY_DIR, POINTER_FILENAME_PREFIX);
     }
 
     private String buildFileExpression(String logPattern) {
@@ -212,14 +257,16 @@ public class WildcardChannelServiceImpl extends AbstractChannelService {
         HeraFileMonitor monitor = new HeraFileMonitor();
         AtomicReference<ReadResult> readResult = new AtomicReference<>();
 
-        monitor.setListener(new DefaultMonitorListener(monitor, event -> {
+        defaultMonitorListener = new DefaultMonitorListener(monitor, event -> {
             readResult.set(event.getReadResult());
             if (readResult.get() == null) {
                 log.info("Empty data");
                 return;
             }
             processLogLines(readResult, patternCode, ip, mLog);
-        }));
+        });
+
+        monitor.setListener(defaultMonitorListener);
 
         /**
          * Collect all data in the last row of data that has not been sent for more than 10 seconds.
@@ -255,10 +302,16 @@ public class WildcardChannelServiceImpl extends AbstractChannelService {
         lastFileLineScheduledFuture = ExecutorUtil.scheduleAtFixedRate(() -> {
             Long appendTime = mLog.getAppendTime();
             if (appendTime != null && Instant.now().toEpochMilli() - appendTime > 10 * 1000) {
-                String remainMsg = mLog.takeRemainMsg2();
-                if (null != remainMsg) {
-                    log.info("start send last line, fileName:{}, patternCode:{}, data:{}", readResult.get().getFilePathName(), patternCode, remainMsg);
-                    wrapDataToSend(remainMsg, readResult, patternCode, ip, Instant.now().toEpochMilli());
+                if (reentrantLock.tryLock()) {
+                    try {
+                        String remainMsg = mLog.takeRemainMsg2();
+                        if (null != remainMsg) {
+                            log.info("start send last line, fileName:{}, patternCode:{}, data:{}", readResult.get().getFilePathName(), patternCode, remainMsg);
+                            wrapDataToSend(remainMsg, readResult, patternCode, ip, Instant.now().toEpochMilli());
+                        }
+                    } finally {
+                        reentrantLock.unlock();
+                    }
                 }
             }
         }, 30, 30, TimeUnit.SECONDS);

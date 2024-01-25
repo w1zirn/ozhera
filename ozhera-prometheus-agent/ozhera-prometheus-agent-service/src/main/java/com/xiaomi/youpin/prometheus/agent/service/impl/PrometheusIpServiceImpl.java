@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.youpin.prometheus.agent.service.impl;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
@@ -9,12 +24,11 @@ import com.google.gson.Gson;
 import com.xiaomi.data.push.nacos.NacosNaming;
 import com.xiaomi.youpin.prometheus.agent.domain.Ips;
 import com.xiaomi.youpin.prometheus.agent.service.api.PrometheusIpServiceExtension;
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.models.V1NodeAddress;
-import io.kubernetes.client.openapi.models.V1NodeList;
-import io.kubernetes.client.util.Config;
+import io.fabric8.kubernetes.api.model.Node;
+import io.fabric8.kubernetes.api.model.NodeAddress;
+import io.fabric8.kubernetes.api.model.NodeList;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +72,10 @@ public class PrometheusIpServiceImpl  implements PrometheusIpServiceExtension {
     public static final String ST_K8S_NODE = "http://localhost";
 
     public static final String ONLINE_K8S_NODE = "http://localhost";
+
+    public static final String CUSTOM_JOB_PREFIX = "prometheus_custom_server_";
+
+    public static final String CUSTOM_JOB_PORT_KEY = "ozhera_prometheus_port";
 
     private final Gson gson = new Gson();
 
@@ -122,9 +140,9 @@ public class PrometheusIpServiceImpl  implements PrometheusIpServiceExtension {
                                 cache.putIfAbsent(it, tmpIps);
                             }
                         });
-                        List<String> starterAddrs = instances.stream().filter(it1 -> it1.getMetadata() != null && StringUtils.isNotEmpty(it1.getMetadata().get(PROMETHEUS_PORT))).map(it2 -> {
+                        List<String> starterAddrs = instances.stream().filter(it1 -> it1.getMetadata() != null && StringUtils.startsWith(it,CUSTOM_JOB_PREFIX)).map(it2 -> {
                             String ip = it2.getIp();
-                            String port = it2.getMetadata().get(PROMETHEUS_PORT);
+                            String port = it2.getMetadata().get(CUSTOM_JOB_PORT_KEY);
                             return ip + ":" + port;
                         }).collect(Collectors.toList());
 
@@ -263,7 +281,7 @@ public class PrometheusIpServiceImpl  implements PrometheusIpServiceExtension {
     public List<Ips> getK8sNodeIp(String type) {
 
         List<String> res = new ArrayList<>();
-        V1NodeList nodes;
+       /* V1NodeList nodes;
         try {
             ApiClient client = getClient();
             if (client == null) {
@@ -284,7 +302,19 @@ public class PrometheusIpServiceImpl  implements PrometheusIpServiceExtension {
                 }
             }
             res.add(info);
-        });
+        });*/
+        try (KubernetesClient client = new DefaultKubernetesClient()) {
+            // get Node list
+            NodeList nodeList = client.nodes().list();
+            for (Node node : nodeList.getItems()) {
+                // fetch Node adress list
+                for (NodeAddress address : node.getStatus().getAddresses()) {
+                    res.add(address.getAddress());
+                }
+            }
+        } catch (Exception e) {
+          log.error("getK8sNodeIp error:{}",e.getMessage());
+        }
         log.info("getK8sNodeIp k8s node count:{}",res.size());
         List<String> result = new ArrayList<>();
         String port = "";
@@ -348,7 +378,7 @@ public class PrometheusIpServiceImpl  implements PrometheusIpServiceExtension {
         }
     }
 
-    private ApiClient getClient() {
+/*    private ApiClient getClient() {
         lock.lock();
         try {
             return Config.defaultClient();
@@ -358,6 +388,6 @@ public class PrometheusIpServiceImpl  implements PrometheusIpServiceExtension {
         } finally {
             lock.unlock();
         }
-    }
+    }*/
 
 }

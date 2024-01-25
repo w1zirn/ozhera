@@ -1,19 +1,18 @@
 /*
- *  Copyright 2020 Xiaomi
+ * Copyright 2020 Xiaomi
  *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package com.xiaomi.mione.prometheus.starter.all.config;
 
 import com.alibaba.nacos.api.exception.NacosException;
@@ -39,7 +38,7 @@ import java.util.Map;
 public class PrometheusConfigure {
 
     private static final String PROMETHEUS_CUSTOM_SERVER_KEY = "prometheus_custom_server_";
-    private static final String PROMETHEUS_CUSTOM_PORT_KEY = "prometheus_port";
+    private static final String PROMETHEUS_CUSTOM_PORT_KEY = "ozhera_prometheus_port";
 
     public static void init(String nacosAddr, String serverEnv) {
         try {
@@ -47,6 +46,7 @@ public class PrometheusConfigure {
             String serviceName = prometheusService.getServiceName();
             String port = prometheusService.getPort();
             String serverIp = prometheusService.getServerIp();
+            log.info("prometheus init, serviceName is : "+serviceName+", port is : "+port+", serverIp is : "+serverIp);
             registNacos(nacosAddr, serviceName, serverIp, port);
             Metrics.getInstance().init(serverEnv, serviceName);
             startHttpServer(port);
