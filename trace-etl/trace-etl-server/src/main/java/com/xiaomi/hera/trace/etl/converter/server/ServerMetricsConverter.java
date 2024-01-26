@@ -15,7 +15,7 @@
  */
 package com.xiaomi.hera.trace.etl.converter.server;
 
-import com.xiaomi.hera.trace.etl.domain.converter.ServerConverter;
+import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket;
 import com.xiaomi.hera.trace.etl.converter.BaseMetricsConverter;
 import com.xiaomi.hera.trace.etl.source.ErrorSourceReceive;
@@ -25,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+
+import static com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket.DUBBO_BUCKET;
+import static com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket.HTTP_BUCKET;
 
 @Service
 @Slf4j
@@ -36,7 +39,7 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
     @Autowired
     private SourceObtainService sourceObtainService;
 
-    public void convert(ServerConverter serverConverter) {
+    public void convert(MetricsConverter serverConverter) {
         String type;
         switch (serverConverter.getSpanType()) {
             case http:
@@ -114,7 +117,35 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                 }
                 break;
         }
-        // extension
         metricsExtend(serverConverter);
+    }
+
+    /**
+     * This method specifies certain metrics specific to particular scenarios.
+     * If we intend to utilize these metrics, it is necessary to explicitly invoke `super.metricsExtend` in the subclass.
+     * @param metricsConverter
+     */
+    public void metricsExtend(MetricsConverter metricsConverter){
+        String type;
+        switch (metricsConverter.getSpanType()) {
+            case http:
+                type = "aop";
+                String[] httpKeys = tagKeys();
+                String[] httpValues = tagValues(metricsConverter);
+                multiMetricsCall.newHistogram(buildMetricName(type, "MethodTimeCount_without_methodName"),HTTP_BUCKET, httpKeys)
+                        .with(httpValues)
+                        .observe(metricsConverter.getDuration(), httpValues);
+                break;
+            case dubbo:
+                type = "dubbo";
+                String[] dubboKeysWithoutMethod = tagKeys("serviceName");
+                Map<String, String> rpcMap = parseRPCServiceAndMethod(metricsConverter);
+                String[] dubboValuesWithoutMethod = tagValues(metricsConverter, rpcMap.get("rpcService"));
+
+                multiMetricsCall.newHistogram(buildMetricName(type, "ProviderCount_without_methodName"),DUBBO_BUCKET, dubboKeysWithoutMethod)
+                        .with(dubboValuesWithoutMethod)
+                        .observe(metricsConverter.getDuration(), dubboValuesWithoutMethod);
+                break;
+        }
     }
 }

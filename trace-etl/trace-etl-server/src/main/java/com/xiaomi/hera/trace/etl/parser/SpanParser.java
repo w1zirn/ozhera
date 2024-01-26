@@ -20,9 +20,13 @@ import com.xiaomi.hera.trace.etl.converter.client.ClientMetricsConverter;
 import com.xiaomi.hera.trace.etl.converter.local.LocalMetricsConverter;
 import com.xiaomi.hera.trace.etl.converter.server.ServerMetricsConverter;
 import com.xiaomi.hera.trace.etl.converter.topology.TopologyMetricsConverter;
+import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
+import com.xiaomi.hera.trace.etl.domain.source.DriverSourceDomain;
 import com.xiaomi.hera.trace.etl.parser.converter.ConverterService;
 import com.xiaomi.hera.trace.etl.skip.SpanSkipHandler;
+import com.xiaomi.hera.trace.etl.source.DriverSourceReceive;
+import com.xiaomi.hera.trace.etl.source.service.SourceObtainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -45,7 +49,11 @@ public class SpanParser {
     @Autowired
     private LocalMetricsConverter localMetricsConverter;
     @Autowired
-    private TopologyMetricsConverter topoMetricsConverter;
+    private TopologyMetricsConverter topologyMetricsConverter;
+    @Autowired
+    private SourceObtainService sourceObtainService;
+    @Autowired
+    private DriverSourceReceive driverSourceReceive;
 
     public void parseBefore(SpanHolder spanHolder) {
         // statistics span QPS
@@ -65,6 +73,20 @@ public class SpanParser {
         localMetricsConverter.convert(converterService.getLocalConverter(spanHolder));
     }
     public void parseTopology(SpanHolder spanHolder) {
-        topoMetricsConverter.convert(converterService.getTopologyConverter(spanHolder));
+        MetricsConverter topologyConverter = converterService.getTopologyConverter(spanHolder);
+        if(topologyConverter != null) {
+            topologyMetricsConverter.convert(topologyConverter);
+        }
+    }
+
+    /**
+     * This method can serve as an extension method to implement operations beyond the conversion of metrics.
+     * @param spanHolder
+     */
+    public void parseAfter(SpanHolder spanHolder){
+        DriverSourceDomain driverSourceDomain = sourceObtainService.getDriverSourceDomain(spanHolder);
+        if(driverSourceDomain != null){
+            driverSourceReceive.submitDriverDomain(driverSourceDomain);
+        }
     }
 }

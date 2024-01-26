@@ -20,7 +20,7 @@ import com.xiaomi.hera.trace.etl.api.service.IEnterManager;
 import com.xiaomi.hera.trace.etl.api.service.IMetricsParseService;
 import com.xiaomi.hera.trace.etl.api.service.MQExtension;
 import com.xiaomi.hera.trace.etl.bo.MqConfig;
-import com.xiaomi.hera.trace.etl.util.ThriftUtil;
+import com.xiaomi.hera.trace.etl.domain.metrics.ThriftUtil;
 import com.xiaomi.hera.tspandata.TSpanData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

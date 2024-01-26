@@ -15,8 +15,6 @@
  */
 package run.mone.trace.etl.extension.rocketmq;
 
-import com.xiaomi.hera.trace.etl.api.service.IEnterManager;
-import com.xiaomi.hera.trace.etl.api.service.IMetricsParseService;
 import com.xiaomi.hera.trace.etl.api.service.MQExtension;
 import com.xiaomi.hera.trace.etl.bo.MqConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +31,6 @@ import org.apache.rocketmq.common.message.MessageQueue;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +41,7 @@ import java.util.function.Function;
  * @date 2023/9/19 17:00
  */
 @Service
-@ConditionalOnProperty(name = "mq", havingValue = "rocketMQ")
+@ConditionalOnProperty(name = "mq.type", havingValue = "rocketMQ")
 @Slf4j
 public class RocketMQExtension implements MQExtension<MessageExt, MessageExt> {
 
@@ -62,7 +59,9 @@ public class RocketMQExtension implements MQExtension<MessageExt, MessageExt> {
         if(StringUtils.isNotEmpty(config.getProducerTopicName())) {
             initProducer(config);
         }
-        initConsumer(config);
+        if(StringUtils.isNotEmpty(config.getConsumerTopicName())) {
+            initConsumer(config);
+        }
     }
 
     private void initProducer(MqConfig<MessageExt> config){
@@ -126,6 +125,11 @@ public class RocketMQExtension implements MQExtension<MessageExt, MessageExt> {
     @Override
     public void sendByTraceId(String traceId, MessageExt message) {
         clientMessageQueue.enqueue(traceId, message);
+    }
+
+    @Override
+    public void shutDownConsumer() {
+
     }
 
     private class TraceEtlMessageListener implements MessageListenerConcurrently {

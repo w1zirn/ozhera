@@ -65,4 +65,12 @@ public class TraceAttributes {
     public static final String MESSAGING_DESTINATION_NAME = "messaging.destination.name";
     public static final String MESSAGING_OPERATION = "messaging.operation";
 
+    /**
+     * driver
+     */
+    public static final String DB_DRIVER_DOMAIN_PORT = "db.driver.domainPort";
+    public static final String DB_DRIVER_USER_NAME = "db.driver.userName";
+    public static final String DB_DRIVER_PASSWORD = "db.driver.password";
+    public static final String DB_DRIVER_TYPE = "db.driver.type";
+    public static final String DB_DRIVER_DBNAME = "db.driver.dbName";
 }

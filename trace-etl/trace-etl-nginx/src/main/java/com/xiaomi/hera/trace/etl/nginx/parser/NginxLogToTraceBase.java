@@ -18,7 +18,7 @@ package com.xiaomi.hera.trace.etl.nginx.parser;
 import com.alibaba.fastjson.JSONObject;
 import com.xiaomi.hera.trace.etl.domain.NginxJaegerDomain;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerAttrType;
-import com.xiaomi.hera.trace.etl.util.ThriftUtil;
+import com.xiaomi.hera.trace.etl.domain.metrics.ThriftUtil;
 import com.xiaomi.hera.tspandata.TAttributeKey;
 import com.xiaomi.hera.tspandata.TAttributeType;
 import com.xiaomi.hera.tspandata.TAttributes;

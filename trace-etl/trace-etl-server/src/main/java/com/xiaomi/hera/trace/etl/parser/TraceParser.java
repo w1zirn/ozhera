@@ -16,7 +16,6 @@
 package com.xiaomi.hera.trace.etl.parser;
 
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
-import com.xiaomi.hera.trace.etl.domain.metrics.SpanKind;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +33,6 @@ public class TraceParser {
             if(spanHolder.getSkip()){
                 return;
             }
-
             switch (spanHolder.getSpanKind()){
                 case Client:
                     spanParser.parseClient(spanHolder);
@@ -49,6 +47,7 @@ public class TraceParser {
                 default:
                     log.error("span type value was unexpected, span kind : {}", spanHolder.getSpanKind());
             }
+            spanParser.parseAfter(spanHolder);
         }catch (Throwable t){
             log.error("trace parse error , ",t);
         }

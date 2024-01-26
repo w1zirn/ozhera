@@ -16,17 +16,12 @@
 package com.xiaomi.hera.trace.etl.parser.converter;
 
 import com.xiaomi.hera.trace.etl.api.AttributeService;
-import com.xiaomi.hera.trace.etl.domain.converter.ClientConverter;
-import com.xiaomi.hera.trace.etl.domain.converter.LocalConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
-import com.xiaomi.hera.trace.etl.domain.converter.ServerConverter;
-import com.xiaomi.hera.trace.etl.domain.converter.TopologyConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
 import com.xiaomi.hera.trace.etl.domain.trace.TraceAttributes;
 import com.xiaomi.hera.trace.etl.metadata.OzHeraMetaDataService;
 import com.xiaomi.hera.trace.etl.network.PeerService;
-import com.xiaomi.mone.app.api.model.HeraMetaDataModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,10 +46,10 @@ public class ConverterServiceImpl implements ConverterService{
     private OzHeraMetaDataService metaDataService;
 
     @Override
-    public ClientConverter getClientConverter(SpanHolder spanHolder) {
+    public MetricsConverter getClientConverter(SpanHolder spanHolder) {
         Map<String, String> attributeMap = spanHolder.getAttributeMap();
 
-        ClientConverter clientConverter = new ClientConverter();
+        MetricsConverter clientConverter = new MetricsConverter();
         publicConvert(clientConverter, spanHolder);
 
         switch (spanHolder.getSpanType().spanTypeGroup()) {
@@ -97,10 +92,10 @@ public class ConverterServiceImpl implements ConverterService{
     }
 
     @Override
-    public ServerConverter getServerConverter(SpanHolder spanHolder) {
+    public MetricsConverter getServerConverter(SpanHolder spanHolder) {
 
 
-        ServerConverter serverConverter = new ServerConverter();
+        MetricsConverter serverConverter = new MetricsConverter();
         publicConvert(serverConverter, spanHolder);
 
         switch (spanHolder.getSpanType().spanTypeGroup()) {
@@ -115,24 +110,24 @@ public class ConverterServiceImpl implements ConverterService{
     }
 
     @Override
-    public LocalConverter getLocalConverter(SpanHolder spanHolder) {
-        LocalConverter localConverter = new LocalConverter();
+    public MetricsConverter getLocalConverter(SpanHolder spanHolder) {
+        MetricsConverter localConverter = new MetricsConverter();
         publicConvert(localConverter, spanHolder);
         return localConverter;
     }
 
     @Override
-    public TopologyConverter getTopologyConverter(SpanHolder spanHolder) {
+    public MetricsConverter getTopologyConverter(SpanHolder spanHolder) {
         String destApp = metaDataService.getMetricsMetaDataName(peerService.getPeer(spanHolder));
         if(destApp == null){
             return null;
         }
-        TopologyConverter topologyConverter = new TopologyConverter();
+        MetricsConverter topologyConverter = new MetricsConverter();
         topologyConverter.setDestApp(destApp);
-        topologyConverter.setSourceApp(spanHolder.getApplication());
+        topologyConverter.setApplication(spanHolder.getApplication());
         topologyConverter.setError(spanHolder.getIsError());
         topologyConverter.setDuration(spanHolder.getEndTime() - spanHolder.getStartTime());
-        topologyConverter.setMetaDataType(spanHolder.getSpanType().spanTypeGroup().name());
+        topologyConverter.setSpanTypeGroup(spanHolder.getSpanType().spanTypeGroup().name());
         return topologyConverter;
     }
 
@@ -180,5 +175,6 @@ public class ConverterServiceImpl implements ConverterService{
         converter.setSpanKind(spanHolder.getSpanKind());
         converter.setServerIp(spanHolder.getServerIp());
         converter.setServerEnv(spanHolder.getServerEnv());
+        converter.setServerEnvId(spanHolder.getServerEnvId());
     }
 }

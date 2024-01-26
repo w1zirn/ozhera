@@ -15,8 +15,7 @@
  */
 package com.xiaomi.hera.trace.etl.api.service;
 
-import com.xiaomi.hera.trace.etl.domain.DriverDomain;
-import com.xiaomi.hera.trace.etl.domain.ErrorTraceMessage;
+import com.xiaomi.hera.trace.etl.domain.source.DriverSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.tracequery.Trace;
 import com.xiaomi.hera.trace.etl.domain.tracequery.TraceIdQueryVo;
@@ -39,7 +38,7 @@ public interface DataSourceService {
 
     void insertHeraTraceService(String date, String serviceName, String operationName);
 
-    void insertDriver(DriverDomain driverDomain);
+    void insertDriver(DriverSourceDomain driverSourceDomain);
 
     void insertHeraSpan(TSpanData tSpanData, String serviceName, String spanName);
 }

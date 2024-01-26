@@ -16,6 +16,8 @@
 package com.xiaomi.hera.trace.etl.source.service;
 
 import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
+import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
+import com.xiaomi.hera.trace.etl.domain.source.DriverSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 
 public interface SourceObtainService {
@@ -23,4 +25,6 @@ public interface SourceObtainService {
     ErrorTraceSourceDomain getErrorTraceSourceDomain(MetricsConverter metricsConverter);
 
     ErrorTraceSourceDomain getSlowTraceSourceDomain(MetricsConverter metricsConverter);
+
+    DriverSourceDomain getDriverSourceDomain(SpanHolder spanHolder);
 }

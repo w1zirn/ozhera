@@ -13,7 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.domain.converter;
+package com.xiaomi.hera.trace.etl.api;
 
-public class LocalConverter extends MetricsConverter{
+import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
+
+import java.util.List;
+
+public interface MetricsTagService {
+
+    List<String> getCommonTagsKeys();
+
+    List<String> getCommonTagsValues(MetricsConverter metricsConverter);
 }

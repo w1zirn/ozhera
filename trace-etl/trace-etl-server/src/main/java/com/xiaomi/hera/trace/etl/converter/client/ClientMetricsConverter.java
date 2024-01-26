@@ -16,7 +16,7 @@
 package com.xiaomi.hera.trace.etl.converter.client;
 
 import com.xiaomi.hera.trace.etl.converter.BaseMetricsConverter;
-import com.xiaomi.hera.trace.etl.domain.converter.ClientConverter;
+import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket;
 import com.xiaomi.hera.trace.etl.source.ErrorSourceReceive;
 import com.xiaomi.hera.trace.etl.source.service.SourceObtainService;
@@ -26,11 +26,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket.DUBBO_BUCKET;
+import static com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket.HTTP_BUCKET;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @Service
 @Slf4j
-public class ClientMetricsConverter extends BaseMetricsConverter {
+public abstract class ClientMetricsConverter extends BaseMetricsConverter {
 
     @Autowired
     private ErrorSourceReceive errorSourceReceive;
@@ -38,7 +40,7 @@ public class ClientMetricsConverter extends BaseMetricsConverter {
     @Autowired
     private SourceObtainService sourceObtainService;
 
-    public void convert(ClientConverter clientConverter) {
+    public void convert(MetricsConverter clientConverter) {
         String type;
         switch (clientConverter.getSpanType()) {
             case http:
@@ -48,7 +50,7 @@ public class ClientMetricsConverter extends BaseMetricsConverter {
                 String[] httpValuesWithCode = tagValues(clientConverter, clientConverter.getServiceName(), clientConverter.getMethodName(), String.valueOf(clientConverter.getResponseCode()));
                 type = "aop";
                 multiMetricsCall.newCounter(buildMetricName(type, "ClientTotalMethodCount"), httpKeys).with(httpValues).add(1, httpValues);
-                multiMetricsCall.newHistogram(buildMetricName(type, "ClientMethodTimeCount"), MetricsBucket.HTTP_BUCKET, httpKeys).with(httpValues).observe(clientConverter.getDuration(), httpValues);
+                multiMetricsCall.newHistogram(buildMetricName(type, "ClientMethodTimeCount"), HTTP_BUCKET, httpKeys).with(httpValues).observe(clientConverter.getDuration(), httpValues);
                 if (clientConverter.isError()) {
                     multiMetricsCall.newCounter(buildMetricName("http", "ClientError"), httpKeysWithCode).with(httpValuesWithCode).add(1, httpValuesWithCode);
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(clientConverter));
@@ -65,7 +67,7 @@ public class ClientMetricsConverter extends BaseMetricsConverter {
                 String[] dubboKeys = tagKeys("serviceName", "methodName");
                 String[] dubboValues = tagValues(clientConverter, clientConverter.getServiceName(), clientConverter.getMethodName());
                 multiMetricsCall.newCounter(buildMetricName(type, "BisTotalCount"), dubboKeys).with(dubboValues).add(1, dubboValues);
-                multiMetricsCall.newHistogram(buildMetricName(type, "ConsumerTimeCost"), MetricsBucket.DUBBO_BUCKET, dubboKeys).with(dubboValues).observe(clientConverter.getDuration(), dubboValues);
+                multiMetricsCall.newHistogram(buildMetricName(type, "ConsumerTimeCost"), DUBBO_BUCKET, dubboKeys).with(dubboValues).observe(clientConverter.getDuration(), dubboValues);
                 if (clientConverter.isError()) {
                     multiMetricsCall.newCounter(buildMetricName(type, "ConsumerError"), dubboKeys).with(dubboValues).add(1, dubboValues);
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(clientConverter));
@@ -173,7 +175,7 @@ public class ClientMetricsConverter extends BaseMetricsConverter {
                 String[] rpcKeys = tagKeys("serviceName", "methodName");
                 String[] rpcValues = tagValues(clientConverter, clientConverter.getServiceName(), clientConverter.getMethodName());
                 multiMetricsCall.newCounter(buildMetricName(type), rpcKeys).with(rpcValues).add(1, rpcValues);
-                multiMetricsCall.newHistogram(buildMetricName(type, "TimeCost"), MetricsBucket.DUBBO_BUCKET, rpcKeys).with(rpcValues).observe(clientConverter.getDuration(), rpcValues);
+                multiMetricsCall.newHistogram(buildMetricName(type, "TimeCost"), DUBBO_BUCKET, rpcKeys).with(rpcValues).observe(clientConverter.getDuration(), rpcValues);
                 if (clientConverter.isError()) {
                     multiMetricsCall.newCounter(buildMetricName(type, "Error"), rpcKeys).with(rpcValues).add(1, rpcValues);
                 } else {
@@ -185,7 +187,33 @@ public class ClientMetricsConverter extends BaseMetricsConverter {
                 }
                 break;
         }
-        // extension
         metricsExtend(clientConverter);
+    }
+
+    /**
+     * This method specifies certain metrics specific to particular scenarios.
+     * If we intend to utilize these metrics, it is necessary to explicitly invoke `super.metricsExtend` in the subclass.
+     * @param metricsConverter
+     */
+    public void metricsExtend(MetricsConverter metricsConverter){
+        String type;
+        switch (metricsConverter.getSpanType()) {
+            case http:
+                type = "aop";
+                String[] httpKeys = tagKeys("serviceName");
+                String[] httpValues = tagValues(metricsConverter, metricsConverter.getServiceName());
+                multiMetricsCall.newHistogram(buildMetricName(type, "ClientMethodTimeCount_without_methodName"),HTTP_BUCKET, httpKeys)
+                        .with(httpValues)
+                        .observe(metricsConverter.getDuration(), httpValues);
+                break;
+            case dubbo:
+                type = "dubbo";
+                String[] dubboKeysWithoutMethod = tagKeys("serviceName");
+                String[] dubboValuesWithoutMethod = tagValues(metricsConverter, metricsConverter.getServiceName());
+                multiMetricsCall.newHistogram(buildMetricName(type, "ConsumerTimeCost_without_methodName"),DUBBO_BUCKET, dubboKeysWithoutMethod)
+                        .with(dubboValuesWithoutMethod)
+                        .observe(metricsConverter.getDuration(), dubboValuesWithoutMethod);
+                break;
+        }
     }
 }

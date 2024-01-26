@@ -16,7 +16,7 @@
 package com.xiaomi.hera.trace.etl.converter.topology;
 
 import com.xiaomi.hera.trace.etl.converter.BaseMetricsConverter;
-import com.xiaomi.hera.trace.etl.domain.converter.TopologyConverter;
+import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,9 +25,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class TopologyMetricsConverter extends BaseMetricsConverter {
 
-    public void convert(TopologyConverter topologyConverter){
+    public void convert(MetricsConverter topologyConverter){
         String[] keys = tagKeys("application", "destApp", "type");
-        String[] values = tagValues(topologyConverter, topologyConverter.getSourceApp(), topologyConverter.getDestApp(), topologyConverter.getMetaDataType());
+        String[] values = tagValues(topologyConverter, topologyConverter.getApplication(), topologyConverter.getDestApp(), topologyConverter.getSpanTypeGroup());
         multiMetricsCall.newHistogram("app_call_relation_latency_client", MetricsBucket.HTTP_BUCKET, keys)
                 .with(values)
                 .observe(topologyConverter.getDuration(), values);
@@ -40,5 +40,6 @@ public class TopologyMetricsConverter extends BaseMetricsConverter {
                     .with(values)
                     .add(1, values);
         }
+        metricsExtend(topologyConverter);
     }
 }

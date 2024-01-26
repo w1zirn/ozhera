@@ -16,10 +16,12 @@
 package run.mone.trace.etl.extension.kafka;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConditionalOnProperty(name = "mq.type", havingValue = "kafka")
 public class BeanInitConfigure {
 
     @NacosValue("${kafka.vpc.type}")

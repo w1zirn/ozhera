@@ -16,11 +16,11 @@
 package com.xiaomi.hera.trace.etl.converter;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
+import com.xiaomi.hera.trace.etl.api.MetricsTagService;
 import com.xiaomi.hera.trace.etl.config.TraceConfig;
 import com.xiaomi.hera.trace.etl.consumer.MultiMetricsCall;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
-import com.xiaomi.hera.trace.etl.domain.converter.ServerConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +57,9 @@ public class BaseMetricsConverter {
     @Autowired
     protected MultiMetricsCall multiMetricsCall;
 
+    @Autowired
+    private MetricsTagService metricsTagService;
+
     private final static int DEFAULT_SLOW_TIME = 1000;
 
     protected String[] tagKeys(String... customKeys) {
@@ -84,14 +86,15 @@ public class BaseMetricsConverter {
     }
 
     protected List<String> getCommonTagKeys() {
-        return Collections.emptyList();
+        return metricsTagService.getCommonTagsKeys();
     }
 
     protected List<String> commonTagValues(MetricsConverter metricsConverter) {
-        return Collections.emptyList();
+        return metricsTagService.getCommonTagsValues(metricsConverter);
     }
 
-    protected void metricsExtend(MetricsConverter metricsConverter){
+    protected void metricsExtend(MetricsConverter metricsConverter) {
+
     }
 
     public String buildMetricName(String type, String name) {
@@ -141,7 +144,7 @@ public class BaseMetricsConverter {
         }
     }
 
-    public Map<String, String> parseRPCServiceAndMethod(ServerConverter serverConverter) {
+    public Map<String, String> parseRPCServiceAndMethod(MetricsConverter serverConverter) {
         String rpcService = defaultString(serverConverter.getServiceName(), "");
         String rpcMethod = defaultString(serverConverter.getMethodName(), "");
         Map<String, String> ret = new HashMap<>(2);

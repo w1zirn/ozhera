@@ -66,6 +66,10 @@ public class MultiMetricsCall {
         return mutiMetricsArray[this.index.get() == 0 ? 1 : 0];
     }
 
+    public MutiMetrics current(){
+        return mutiMetricsArray[this.index.get()];
+    }
+
 
     public XmCounter newCounter(String metricName, String... labelNames) {
         return mutiMetricsArray[index.get()].newCounter(metricName, labelNames);

@@ -39,4 +39,6 @@ public interface MQExtension<PRODUCER, CONSUMER> {
      * if it's Kafka, messages with the same traceID will be sent to the same partition.
      */
     void sendByTraceId(String traceId, PRODUCER message);
+
+    void shutDownConsumer();
 }

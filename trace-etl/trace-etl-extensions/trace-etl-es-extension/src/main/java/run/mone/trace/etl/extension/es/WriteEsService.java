@@ -28,6 +28,7 @@ import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerLogs;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerProcess;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerRefType;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerReferences;
+import com.xiaomi.hera.trace.etl.domain.source.DriverSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 import com.xiaomi.hera.trace.etl.util.ExecutorUtil;
 import com.xiaomi.hera.trace.etl.util.MessageUtil;
@@ -94,10 +95,8 @@ public class WriteEsService {
 
     public void submitErrorEsTrace(ErrorTraceSourceDomain errorTraceSourceDomain) {
         Map<String, Object> map = errorTraceSourceDomain.getDataMap();
-        ExecutorUtil.submit(() -> {
-            String format1 = DateTimeFormatter.ofPattern("yyyy.MM.dd").format(LocalDate.now());
-            esTraceUtil.insertErrorBulk(errorIndexPrefix + format1, map);
-        });
+        String format1 = DateTimeFormatter.ofPattern("yyyy.MM.dd").format(LocalDate.now());
+        esTraceUtil.insertErrorBulk(errorIndexPrefix + format1, map);
     }
 
     public String buildJaegerES(TSpanData tSpanData) {
@@ -180,10 +179,10 @@ public class WriteEsService {
         return list;
     }
 
-    private JaegerProcess buildProcess(String serviceName, TResource resource){
+    private JaegerProcess buildProcess(String serviceName, TResource resource) {
         JaegerProcess jaegerProcess = new JaegerProcess();
         jaegerProcess.setServiceName(serviceName);
-        if(resource != null) {
+        if (resource != null) {
             jaegerProcess.setTags(buildAttributes(resource.getAttributes()));
         }
         return jaegerProcess;
@@ -196,13 +195,12 @@ public class WriteEsService {
         return value;
     }
 
-    public void insertDriver(DriverDomain driverDomain) {
+    public void insertDriver(DriverSourceDomain driverSourceDomain) {
         String format = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String replace = format.replace("-", ".");
         String index = driverIndexPrefix + replace;
         try {
-            JSONObject jsonObject = (JSONObject) JSONObject.toJSON(driverDomain);
-            esTraceUtil.insertBulk(index, jsonObject);
+            esTraceUtil.insertBulk(index, driverSourceDomain.getDataMap());
         } catch (Exception e) {
             log.error("db/redis es data exception:", e);
         }

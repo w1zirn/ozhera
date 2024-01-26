@@ -16,8 +16,7 @@
 package run.mone.trace.etl.extension.doris;
 
 import com.xiaomi.hera.trace.etl.api.service.DataSourceService;
-import com.xiaomi.hera.trace.etl.domain.DriverDomain;
-import com.xiaomi.hera.trace.etl.domain.ErrorTraceMessage;
+import com.xiaomi.hera.trace.etl.domain.source.DriverSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.tracequery.Trace;
 import com.xiaomi.hera.trace.etl.domain.tracequery.TraceIdQueryVo;
@@ -62,8 +61,8 @@ public class DorisDataSourceService implements DataSourceService {
     }
 
     @Override
-    public void insertDriver(DriverDomain driverDomain) {
-        writeDorisService.insertDriver(driverDomain);
+    public void insertDriver(DriverSourceDomain driverSourceDomain) {
+        writeDorisService.insertDriver(driverSourceDomain);
     }
 
     @Override

@@ -18,14 +18,13 @@ package run.mone.trace.etl.extension.doris;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
-import com.xiaomi.hera.trace.etl.domain.DriverDomain;
-import com.xiaomi.hera.trace.etl.domain.ErrorTraceMessage;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerAttrType;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerAttribute;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerLogs;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerProcess;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerRefType;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerReferences;
+import com.xiaomi.hera.trace.etl.domain.source.DriverSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 import com.xiaomi.hera.trace.etl.util.MessageUtil;
 import com.xiaomi.hera.tspandata.TAttributeKey;
@@ -39,7 +38,6 @@ import com.xiaomi.hera.tspandata.TValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import run.mone.doris.DorisService;
 import run.mone.trace.etl.extension.doris.domain.HeraErrorSlowTraceColumn;
 import run.mone.trace.etl.extension.doris.domain.HeraTraceDriverColumn;
@@ -248,16 +246,16 @@ public class WriteDorisService {
         return value;
     }
 
-    public void insertDriver(DriverDomain driverDomain) {
+    public void insertDriver(DriverSourceDomain driverSourceDomain) {
         try {
             Map<String, Object> data = new HashMap<>();
-            data.put(HeraTraceDriverColumn.TYPE, driverDomain.getType());
-            data.put(HeraTraceDriverColumn.TIME_STAMP, driverDomain.getTimeStamp());
-            data.put(HeraTraceDriverColumn.APP_NAME, driverDomain.getAppName());
-            data.put(HeraTraceDriverColumn.DATA_BASE_NAME, driverDomain.getDataBaseName());
-            data.put(HeraTraceDriverColumn.PASSWORD, driverDomain.getPassword());
-            data.put(HeraTraceDriverColumn.DOMAIN_PORT, driverDomain.getDomainPort());
-            data.put(HeraTraceDriverColumn.USER_NAME, driverDomain.getUserName());
+            data.put(HeraTraceDriverColumn.TYPE, driverSourceDomain.getType());
+            data.put(HeraTraceDriverColumn.TIME_STAMP, driverSourceDomain.getTimeStamp());
+            data.put(HeraTraceDriverColumn.APP_NAME, driverSourceDomain.getAppName());
+            data.put(HeraTraceDriverColumn.DATA_BASE_NAME, driverSourceDomain.getDataBaseName());
+            data.put(HeraTraceDriverColumn.PASSWORD, driverSourceDomain.getPassword());
+            data.put(HeraTraceDriverColumn.DOMAIN_PORT, driverSourceDomain.getDomainPort());
+            data.put(HeraTraceDriverColumn.USER_NAME, driverSourceDomain.getUserName());
             dorisService.send(HeraTraceTable.HERA_TRACE_DRIVER_TABLE, TRACE_DRIVER_COLUMN, data);
         } catch (Exception e) {
             log.error("db/redis es data exception:", e);

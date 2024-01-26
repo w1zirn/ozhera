@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +65,9 @@ public class KafkaExtension implements MQExtension<ProducerRecord<String, String
         if (StringUtils.isNotEmpty(config.getProducerTopicName())) {
             initProducer(config);
         }
-        initConsumer(config);
+        if(StringUtils.isNotEmpty(config.getConsumerTopicName())){
+            initConsumer(config);
+        }
     }
 
     private void initProducer(MqConfig<ConsumerRecords<String, String>> config) {
@@ -150,6 +151,11 @@ public class KafkaExtension implements MQExtension<ProducerRecord<String, String
 
     @Override
     public void sendByTraceId(String traceId, ProducerRecord<String, String> message) {
+
+    }
+
+    @Override
+    public void shutDownConsumer() {
 
     }
 

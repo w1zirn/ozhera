@@ -298,4 +298,8 @@ public class SpanHolder {
     public String getOperationName() {
         return span.getName();
     }
+
+    public String getServerEnvId() {
+        return getAttributeOrEmpty("service.env.id");
+    }
 }

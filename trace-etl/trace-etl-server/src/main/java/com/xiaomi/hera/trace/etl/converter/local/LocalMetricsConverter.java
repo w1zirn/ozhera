@@ -16,7 +16,7 @@
 package com.xiaomi.hera.trace.etl.converter.local;
 
 import com.xiaomi.hera.trace.etl.converter.BaseMetricsConverter;
-import com.xiaomi.hera.trace.etl.domain.converter.LocalConverter;
+import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket;
 import com.xiaomi.hera.trace.etl.source.ErrorSourceReceive;
 import com.xiaomi.hera.trace.etl.source.service.SourceObtainService;
@@ -35,7 +35,7 @@ public class LocalMetricsConverter extends BaseMetricsConverter {
     @Autowired
     private SourceObtainService sourceObtainService;
 
-    public void convert(LocalConverter localConverter) {
+    public void convert(MetricsConverter localConverter) {
         String type;
         switch (localConverter.getSpanType()) {
             case custom_aano_method:
@@ -66,5 +66,6 @@ public class LocalMetricsConverter extends BaseMetricsConverter {
                 }
                 break;
         }
+        metricsExtend(localConverter);
     }
 }

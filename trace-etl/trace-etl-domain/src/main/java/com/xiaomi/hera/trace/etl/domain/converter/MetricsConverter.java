@@ -17,6 +17,7 @@ package com.xiaomi.hera.trace.etl.domain.converter;
 
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanKind;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
+import com.xiaomi.hera.trace.etl.domain.metrics.SpanTypeGroup;
 import lombok.Builder;
 import lombok.Data;
 
@@ -56,4 +57,11 @@ public class MetricsConverter {
     private long endTime;
 
     private String serverEnv;
+
+    private String serverEnvId;
+
+    private String destApp;
+
+    private String spanTypeGroup;
+
 }
