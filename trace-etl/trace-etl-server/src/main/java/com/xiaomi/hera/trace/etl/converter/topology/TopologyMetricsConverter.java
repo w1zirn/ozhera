@@ -26,8 +26,8 @@ import org.springframework.stereotype.Service;
 public class TopologyMetricsConverter extends BaseMetricsConverter {
 
     public void convert(MetricsConverter topologyConverter){
-        String[] keys = tagKeys("application", "destApp", "type");
-        String[] values = tagValues(topologyConverter, topologyConverter.getApplication(), topologyConverter.getDestApp(), topologyConverter.getSpanTypeGroup());
+        String[] keys = new String[]{"application", "destApp", "type"};
+        String[] values = new String[]{topologyConverter.getMetricsApplication(), topologyConverter.getDestApp(), topologyConverter.getSpanTypeGroup()};
         multiMetricsCall.newHistogram("app_call_relation_latency_client", MetricsBucket.HTTP_BUCKET, keys)
                 .with(values)
                 .observe(topologyConverter.getDuration(), values);

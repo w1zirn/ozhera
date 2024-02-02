@@ -73,4 +73,27 @@ public class TraceAttributes {
     public static final String DB_DRIVER_PASSWORD = "db.driver.password";
     public static final String DB_DRIVER_TYPE = "db.driver.type";
     public static final String DB_DRIVER_DBNAME = "db.driver.dbName";
+
+    /**
+     * hera-context
+     */
+    public static final String HERA_CONTEXT = "span.hera_context";
+
+    /**
+     * common
+     */
+    public static final String ERROR = "error";
+    public static final String SERVICE_ENV = "service.env";
+    public static final String SERVICE_ENV_ID = "service.env.id";
+
+
+    /**
+     * nginx attribute
+     */
+    public static final String HTTP_REMOTE_ADDRESS = "http.remote.address";
+    public static final String HTTP_REQUEST = "http.request";
+    public static final String HTTP_REFERER = "http.referer";
+    public static final String HTTP_X_FORWARDED_FOR = "http.x-forwarded-for";
+    public static final String HTTP_UPSTREAM_ADDRESS = "http.upstream.address";
+    public static final String HTTP_UPSTREAM_STATUS = "http.upstream.status";
 }

@@ -35,7 +35,7 @@ public class MetricsTagServiceImpl implements MetricsTagService {
     @Override
     public List<String> getCommonTagsValues(MetricsConverter metricsConverter) {
         return Arrays.asList(
-                metricsConverter.getApplication(),
+                metricsConverter.getMetricsApplication(),
                 metricsConverter.getServerIp(),
                 metricsConverter.getServerEnv(),
                 metricsConverter.getServerEnvId()

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-@Builder
 public class ErrorTraceSourceDomain implements SourceDomain {
 
     public static final String TRACE_ID = "traceId";
@@ -54,6 +53,27 @@ public class ErrorTraceSourceDomain implements SourceDomain {
     protected String serverEnv;
 
     private String prefixIndex;
+
+     public ErrorTraceSourceDomain(){
+
+     }
+
+     //  Copy constructor for ErrorTraceSourceDomain
+     public ErrorTraceSourceDomain(ErrorTraceSourceDomain domain){
+         this.traceId = domain.getTraceId();
+         this.domain = domain.getDomain();
+         this.type = domain.getType();
+         this.host = domain.getHost();
+         this.url = domain.getUrl();
+         this.dataSource = domain.getDataSource();
+         this.serviceName = domain.getServiceName();
+         this.timestamp = domain.getTimestamp();
+         this.duration = domain.getDuration();
+         this.errorCode = domain.getErrorCode();
+         this.errorType = domain.getErrorType();
+         this.serverEnv = domain.getServerEnv();
+         this.prefixIndex = domain.getPrefixIndex();
+     }
 
     @Override
     public String getPrefixIndex() {

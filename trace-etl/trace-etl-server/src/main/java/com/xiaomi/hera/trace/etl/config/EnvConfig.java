@@ -28,7 +28,7 @@ public class EnvConfig {
 
     @Value("${server.type}")
     private String serverType;
-    @Value("${es.trace.index.error.prefix}")
+    @Value("${es.error.index}")
     private String errorTraceIndexPrefix;
     @Value("${es.trace.index.driver.prefix}")
     private String driverTraceIndexPrefix;

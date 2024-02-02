@@ -234,7 +234,7 @@ public class SpanHolder {
     }
 
     public String getServerEnv() {
-        return getAttributeOrEmpty("service.env");
+        return getAttributeOrEmpty(TraceAttributes.SERVICE_ENV);
     }
 
     public String getName() {
@@ -300,6 +300,6 @@ public class SpanHolder {
     }
 
     public String getServerEnvId() {
-        return getAttributeOrEmpty("service.env.id");
+        return getAttributeOrEmpty(TraceAttributes.SERVICE_ENV_ID);
     }
 }

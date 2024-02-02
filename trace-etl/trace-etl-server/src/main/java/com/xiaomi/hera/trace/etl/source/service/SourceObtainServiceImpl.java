@@ -65,22 +65,22 @@ public class SourceObtainServiceImpl implements SourceObtainService{
         return null;
     }
 
-    private ErrorTraceSourceDomain getTraceSourceDomainInternal(MetricsConverter metricsConverter, String errorType) {
-        ErrorTraceSourceDomain domain = ErrorTraceSourceDomain.builder()
-                .traceId(metricsConverter.getTraceId())
-                .type(ErrorSpanUtils.toErrorSpanType(metricsConverter.getSpanType(),metricsConverter.getSpanKind()))
-                .domain(esDomain)
-                .host(metricsConverter.getServerIp())
-                .url(metricsConverter.getOperationName())
-                .dataSource(metricsConverter.getDataSource())
-                .serviceName(metricsConverter.getApplication())
-                .timestamp(String.valueOf(metricsConverter.getEndTime()))
-                .duration(String.valueOf(metricsConverter.getDuration()))
-                .errorType(errorType)
-                .errorCode(String.valueOf(metricsConverter.getResponseCode()))
-                .serverEnv(metricsConverter.getServerEnv())
-                .prefixIndex(EnvConfig.ERROR_TRACE_INDEX_PREFIX)
-                .build();
+    @Override
+    public ErrorTraceSourceDomain getTraceSourceDomainInternal(MetricsConverter metricsConverter, String errorType) {
+        ErrorTraceSourceDomain domain = new ErrorTraceSourceDomain();
+        domain.setTraceId(metricsConverter.getTraceId());
+        domain.setType(ErrorSpanUtils.toErrorSpanType(metricsConverter.getSpanType(),metricsConverter.getSpanKind()));
+        domain.setDomain(esDomain);
+        domain.setHost(metricsConverter.getServerIp());
+        domain.setUrl(metricsConverter.getOperationName());
+        domain.setDataSource(metricsConverter.getDataSource());
+        domain.setServiceName(metricsConverter.getMetricsApplication());
+        domain.setTimestamp(String.valueOf(metricsConverter.getEndTime()));
+        domain.setDuration(String.valueOf(metricsConverter.getDuration()));
+        domain.setErrorType(errorType);
+        domain.setErrorCode(String.valueOf(metricsConverter.getResponseCode()));
+        domain.setServerEnv(metricsConverter.getServerEnv());
+        domain.setPrefixIndex(EnvConfig.ERROR_TRACE_INDEX_PREFIX);
         return domain;
     }
 

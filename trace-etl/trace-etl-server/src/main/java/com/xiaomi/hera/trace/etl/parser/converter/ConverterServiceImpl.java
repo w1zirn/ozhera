@@ -24,6 +24,7 @@ import com.xiaomi.hera.trace.etl.metadata.OzHeraMetaDataService;
 import com.xiaomi.hera.trace.etl.network.PeerService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -31,6 +32,7 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @Service
+@ConditionalOnProperty(name = "service.selector.property", havingValue = "outer")
 public class ConverterServiceImpl implements ConverterService{
 
     @Autowired
@@ -118,13 +120,23 @@ public class ConverterServiceImpl implements ConverterService{
 
     @Override
     public MetricsConverter getTopologyConverter(SpanHolder spanHolder) {
-        String destApp = metaDataService.getMetricsMetaDataName(peerService.getPeer(spanHolder));
-        if(destApp == null){
+        String destApp = "";
+        // only statistics dubbo redis mysql topology now
+        if(SpanType.dubbo.equals(spanHolder.getSpanType())) {
+            destApp = metaDataService.getMetricsMetaDataName(peerService.getPeer(spanHolder));
+            if (destApp == null) {
+                return null;
+            }
+        }else if(SpanType.mysql.equals(spanHolder.getSpanType())){
+            destApp = "mysql";
+        }else if(SpanType.redis.equals(spanHolder.getSpanType())){
+            destApp = "redis";
+        }else{
             return null;
         }
         MetricsConverter topologyConverter = new MetricsConverter();
         topologyConverter.setDestApp(destApp);
-        topologyConverter.setApplication(spanHolder.getApplication());
+        topologyConverter.setMetricsApplication(spanHolder.getApplication());
         topologyConverter.setError(spanHolder.getIsError());
         topologyConverter.setDuration(spanHolder.getEndTime() - spanHolder.getStartTime());
         topologyConverter.setSpanTypeGroup(spanHolder.getSpanType().spanTypeGroup().name());
@@ -142,7 +154,8 @@ public class ConverterServiceImpl implements ConverterService{
         Map<String, String> attributeMap = spanHolder.getAttributeMap();
         converter.setTraceId(spanHolder.getTraceId());
         converter.setOperationName(spanHolder.getOperationName());
-        converter.setApplication(spanHolder.getApplication());
+        converter.setMetricsApplication(spanHolder.getApplication());
+        converter.setApplication(spanHolder.getService());
         converter.setError(spanHolder.getIsError());
         converter.setDuration(spanHolder.getEndTime() - spanHolder.getStartTime());
         converter.setEndTime(spanHolder.getEndTime());
@@ -157,6 +170,7 @@ public class ConverterServiceImpl implements ConverterService{
                 break;
             case HTTP:
                 converter.setMethodName(StringUtils.defaultString(spanHolder.getName(), ""));
+                break;
             case MQ:
                 converter.setMethodName(attributeMap.getOrDefault(TraceAttributes.MESSAGING_OPERATION, ""));
                 String topic = attributeMap.get(TraceAttributes.MESSAGING_DESTINATION);

@@ -55,7 +55,7 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(serverConverter));
                 } else {
                     multiMetricsCall.newCounter(buildMetricName(type, "SuccessMethodCount"), httpKeys).with(httpValues).add(1, httpValues);
-                    if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getApplication())) {
+                    if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getMetricsApplication())) {
                         multiMetricsCall.newCounter(buildMetricName("http", "SlowQuery"), httpKeys).with(httpValues).add(1, httpValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(serverConverter));
                     }
@@ -73,7 +73,7 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(serverConverter));
                 } else {
                     multiMetricsCall.newCounter(buildMetricName(type, "MethodCalledSuccessCount"), dubboKeys).with(dubboValues).add(1, dubboValues);
-                    if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getApplication())) {
+                    if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getMetricsApplication())) {
                         multiMetricsCall.newCounter(buildMetricName(type, "ProviderSlowQuery"), dubboKeys).with(dubboValues).add(1, dubboValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(serverConverter));
                     }
@@ -91,7 +91,7 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                     errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getErrorTraceSourceDomain(serverConverter));
                 } else {
                     multiMetricsCall.newCounter(buildMetricName(type, "Success"), mqKeys).with(mqValues).add(1, mqValues);
-                    if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getApplication())) {
+                    if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getMetricsApplication())) {
                         multiMetricsCall.newCounter(buildMetricName(type, "SlowConsume"), mqKeys).with(mqValues).add(1, mqValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(serverConverter));
                     }
@@ -110,7 +110,7 @@ public class ServerMetricsConverter extends BaseMetricsConverter {
                     multiMetricsCall.newCounter(buildMetricName(type, "Error"), rpcKeys).with(rpcValues).add(1, rpcValues);
                 } else {
                     multiMetricsCall.newCounter(buildMetricName(type, "Success"), rpcKeys).with(rpcValues).add(1, rpcValues);
-                    if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getApplication())) {
+                    if (serverConverter.getDuration() > getSlowThreshold(serverConverter.getSpanType(), serverConverter.getMetricsApplication())) {
                         multiMetricsCall.newCounter(buildMetricName(type, "SlowQuery"), rpcKeys).with(rpcValues).add(1, rpcValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(serverConverter));
                     }

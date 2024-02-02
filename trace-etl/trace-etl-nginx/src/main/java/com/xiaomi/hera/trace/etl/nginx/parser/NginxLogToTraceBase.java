@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiaomi.hera.trace.etl.domain.NginxJaegerDomain;
 import com.xiaomi.hera.trace.etl.domain.jaegeres.JaegerAttrType;
 import com.xiaomi.hera.trace.etl.domain.metrics.ThriftUtil;
+import com.xiaomi.hera.trace.etl.domain.trace.TraceAttributes;
 import com.xiaomi.hera.tspandata.TAttributeKey;
 import com.xiaomi.hera.tspandata.TAttributeType;
 import com.xiaomi.hera.tspandata.TAttributes;
@@ -101,15 +102,15 @@ public abstract class NginxLogToTraceBase {
 
     private List<Map<String, Object>> completeTags(NginxJaegerDomain parse) {
         List<Map<String, Object>> result = new ArrayList<>();
-        result.add(genarateTags("http.remote.address", parse.getRemoteAddr(), JaegerAttrType.STRING));
-        result.add(genarateTags("http.request", parse.getRequest(), JaegerAttrType.STRING));
-        result.add(genarateTags("http.status_code", parse.getStatus() + "", JaegerAttrType.LONG));
-        result.add(genarateTags("error", 400 <= parse.getStatus() && parse.getStatus() < 600 ? "true" : "false", JaegerAttrType.BOOLEAN));
-        result.add(genarateTags("http.referer", parse.getRefer(), JaegerAttrType.STRING));
-        result.add(genarateTags("http.user_agent", parse.getUa(), JaegerAttrType.STRING));
-        result.add(genarateTags("http.x-forwarded-for", parse.getxForwardedFor(), JaegerAttrType.STRING));
-        result.add(genarateTags("http.upstream.address", parse.getUpstreamAddr(), JaegerAttrType.STRING));
-        result.add(genarateTags("http.upstream.status", parse.getUpstreamStatus(), JaegerAttrType.STRING));
+        result.add(genarateTags(TraceAttributes.HTTP_REMOTE_ADDRESS, parse.getRemoteAddr(), JaegerAttrType.STRING));
+        result.add(genarateTags(TraceAttributes.HTTP_REQUEST, parse.getRequest(), JaegerAttrType.STRING));
+        result.add(genarateTags(TraceAttributes.HTTP_STATUS_CODE, parse.getStatus() + "", JaegerAttrType.LONG));
+        result.add(genarateTags(TraceAttributes.ERROR, 400 <= parse.getStatus() && parse.getStatus() < 600 ? "true" : "false", JaegerAttrType.BOOLEAN));
+        result.add(genarateTags(TraceAttributes.HTTP_REFERER, parse.getRefer(), JaegerAttrType.STRING));
+        result.add(genarateTags(TraceAttributes.HTTP_USER_AGENT, parse.getUa(), JaegerAttrType.STRING));
+        result.add(genarateTags(TraceAttributes.HTTP_X_FORWARDED_FOR, parse.getxForwardedFor(), JaegerAttrType.STRING));
+        result.add(genarateTags(TraceAttributes.HTTP_UPSTREAM_ADDRESS, parse.getUpstreamAddr(), JaegerAttrType.STRING));
+        result.add(genarateTags(TraceAttributes.HTTP_UPSTREAM_STATUS, parse.getUpstreamStatus(), JaegerAttrType.STRING));
         return result;
     }
 
@@ -118,32 +119,32 @@ public abstract class NginxLogToTraceBase {
         List<TAttributeKey> keys = new ArrayList<>();
         List<TValue> values = new ArrayList<>();
 
-        keys.add(getKey("http.remote.address", TAttributeType.STRING));
+        keys.add(getKey(TraceAttributes.HTTP_REMOTE_ADDRESS, TAttributeType.STRING));
         values.add(new TValue().setStringValue(parse.getRemoteAddr()));
 
-        keys.add(getKey("http.request", TAttributeType.STRING));
+        keys.add(getKey(TraceAttributes.HTTP_REQUEST, TAttributeType.STRING));
         values.add(new TValue().setStringValue(parse.getRequest()));
 
-        keys.add(getKey("http.status_code", TAttributeType.LONG));
+        keys.add(getKey(TraceAttributes.HTTP_STATUS_CODE, TAttributeType.LONG));
         values.add(new TValue().setLongValue(parse.getStatus()));
 
-        keys.add(getKey("error", TAttributeType.BOOLEAN));
+        keys.add(getKey(TraceAttributes.ERROR, TAttributeType.BOOLEAN));
         boolean error = 400 <= parse.getStatus() && parse.getStatus() < 600;
         values.add(new TValue().setBoolValue(error));
 
-        keys.add(getKey("http.referer", TAttributeType.STRING));
+        keys.add(getKey(TraceAttributes.HTTP_REFERER, TAttributeType.STRING));
         values.add(new TValue().setStringValue(parse.getRefer()));
 
-        keys.add(getKey("http.user_agent", TAttributeType.STRING));
+        keys.add(getKey(TraceAttributes.HTTP_USER_AGENT, TAttributeType.STRING));
         values.add(new TValue().setStringValue(parse.getUa()));
 
-        keys.add(getKey("http.x-forwarded-for", TAttributeType.STRING));
+        keys.add(getKey(TraceAttributes.HTTP_X_FORWARDED_FOR, TAttributeType.STRING));
         values.add(new TValue().setStringValue(parse.getxForwardedFor()));
 
-        keys.add(getKey("http.upstream.address", TAttributeType.STRING));
+        keys.add(getKey(TraceAttributes.HTTP_UPSTREAM_ADDRESS, TAttributeType.STRING));
         values.add(new TValue().setStringValue(parse.getUpstreamAddr()));
 
-        keys.add(getKey("http.upstream.status", TAttributeType.STRING));
+        keys.add(getKey(TraceAttributes.HTTP_UPSTREAM_STATUS, TAttributeType.STRING));
         values.add(new TValue().setStringValue(parse.getUpstreamStatus()));
 
         ret.setKeys(keys);

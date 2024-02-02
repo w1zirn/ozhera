@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnProperty()
+@ConditionalOnProperty(name = "trace.config.get.type", havingValue = "dubbo")
 public class DubboConfiguration {
 
     @Value("${dubbo.protocol.port}")

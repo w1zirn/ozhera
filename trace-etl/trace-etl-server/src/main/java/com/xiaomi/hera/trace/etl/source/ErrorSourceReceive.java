@@ -36,9 +36,6 @@ public class ErrorSourceReceive {
     @Autowired
     private DataSourceService dataSourceService;
 
-    @Autowired
-    private SourceObtainService sourceObtainService;
-
     @PostConstruct
     private void init(){
         observerAdaptor = new ObserverAdaptor<>(Runtime.getRuntime().availableProcessors() * 2 + 1,  30000);

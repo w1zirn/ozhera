@@ -13,34 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.bo;
+package com.xiaomi.hera.trace.etl.metadata;
 
+import com.xiaomi.mone.app.api.model.HeraMetaDataModel;
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Properties;
-import java.util.function.Function;
-
-/**
- * @author goodjava@qq.com
- * @date 2023/9/19 17:36
- */
 @Data
-public class MqConfig<T> implements Serializable {
+public class HeraMetaDataModelDTO {
 
-    private String nameSerAddr;
+    private HeraMetaDataModel heraMetaDataModel;
 
-    private String consumerGroup;
-    private String consumerTopicName;
+    private String portType;
 
-    private String producerGroup;
-    private String producerTopicName;
-
-    private Function<T, Boolean> consumerMethod;
-    private Function<List<T>, Boolean> batchConsumerMethod;
-
-    private int maxPollRecords;
-
-    private Properties properties;
+    /**
+     * insert or update
+     */
+    private String operator;
 }

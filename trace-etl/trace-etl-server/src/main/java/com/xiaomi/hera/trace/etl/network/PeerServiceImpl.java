@@ -16,14 +16,29 @@
 package com.xiaomi.hera.trace.etl.network;
 
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
+import com.xiaomi.hera.trace.etl.domain.trace.TraceAttributes;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @ConditionalOnProperty(name = "service.selector.property", havingValue = "outer")
 public class PeerServiceImpl implements PeerService{
     @Override
     public String getPeer(SpanHolder spanHolder) {
-        return null;
+        String netPeer,port;
+        Map<String, String> attributeMap = spanHolder.getAttributeMap();
+        netPeer = StringUtils.firstNonEmpty(
+                attributeMap.get(TraceAttributes.NET_PEER_IP),
+                attributeMap.get(TraceAttributes.NET_PEER_NAME),
+                attributeMap.get(TraceAttributes.NET_SOCK_PEER_ADDR)
+        );
+        port = StringUtils.firstNonEmpty(
+                attributeMap.get(TraceAttributes.NET_PEER_PORT),
+                attributeMap.get(TraceAttributes.NET_SOCK_PEER_PORT)
+        );
+        return netPeer+":"+port;
     }
 }

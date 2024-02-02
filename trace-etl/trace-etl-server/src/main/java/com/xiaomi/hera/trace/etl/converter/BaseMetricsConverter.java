@@ -98,11 +98,11 @@ public class BaseMetricsConverter {
     }
 
     public String buildMetricName(String type, String name) {
-        return getMetricsPrefix() + type + name;
+        return getMetricsPrefix() + "_" + type + name;
     }
 
     public String buildMetricName(String type) {
-        return getMetricsPrefix() + type;
+        return getMetricsPrefix() + "_" + type;
     }
 
     protected String getMetricsPrefix() {

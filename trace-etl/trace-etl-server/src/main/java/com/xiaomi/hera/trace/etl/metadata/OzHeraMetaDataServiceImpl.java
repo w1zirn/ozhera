@@ -52,12 +52,22 @@ public class OzHeraMetaDataServiceImpl implements OzHeraMetaDataService{
         if(heraMetaData == null){
             return null;
         }
-        String destApp;
+        String destApp = null;
         if(heraMetaData.getMetaId() == null){
             destApp = heraMetaData.getMetaName().replaceAll("-", "_");
         }else{
             destApp = heraMetaData.getMetaId() + "_" + heraMetaData.getMetaName().replaceAll("-", "_");
         }
         return destApp;
+    }
+
+    @Override
+    public HeraMetaDataModel getMetaDataByDubbo(String dubboMeta) {
+        return null;
+    }
+
+    @Override
+    public void insert(HeraMetaDataModelDTO model) {
+
     }
 }

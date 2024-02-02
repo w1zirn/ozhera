@@ -27,4 +27,6 @@ public interface SourceObtainService {
     ErrorTraceSourceDomain getSlowTraceSourceDomain(MetricsConverter metricsConverter);
 
     DriverSourceDomain getDriverSourceDomain(SpanHolder spanHolder);
+
+    ErrorTraceSourceDomain getTraceSourceDomainInternal(MetricsConverter metricsConverter, String errorType);
 }

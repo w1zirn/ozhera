@@ -32,4 +32,14 @@ public interface OzHeraMetaDataService {
     HeraMetaDataModel getHeraMetaData(SpanHolder spanHolder);
 
     String getMetricsMetaDataName(String peerIpPort);
+
+    /**
+     * Obtaining HeraMetaData through Dubbo metadata information is solely for
+     * the convenience of retrieving the counterpart's IP, port, and other data from the Dubbo registry.
+     * @param dubboMeta
+     * @return
+     */
+    HeraMetaDataModel getMetaDataByDubbo(String dubboMeta);
+
+    void insert(HeraMetaDataModelDTO model);
 }

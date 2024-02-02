@@ -17,8 +17,6 @@ package com.xiaomi.hera.trace.etl.domain.converter;
 
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanKind;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
-import com.xiaomi.hera.trace.etl.domain.metrics.SpanTypeGroup;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -29,6 +27,16 @@ public class MetricsConverter {
     private String methodName;
 
     private String operationName;
+
+    /**
+     * metricsApplication is the application displayed in the metrics label,
+     * representing the value obtained by converting all hyphens to underscores.
+     *
+     * eg：111-test-demo
+     * metricsApplication is 111_test_demo
+     * application is 111-test-demo
+     */
+    private String metricsApplication;
 
     private String application;
 
@@ -64,4 +72,29 @@ public class MetricsConverter {
 
     private String spanTypeGroup;
 
+    public MetricsConverter(MetricsConverter metricsConverter){
+        this.serviceName = metricsConverter.getServiceName();
+        this.methodName = metricsConverter.getMethodName();
+        this.operationName = metricsConverter.getOperationName();
+        this.metricsApplication = metricsConverter.getMetricsApplication();
+        this.application = metricsConverter.getApplication();
+        this.spanType = metricsConverter.getSpanType();
+        this.spanKind = metricsConverter.getSpanKind();
+        this.responseCode = metricsConverter.getResponseCode();
+        this.duration = metricsConverter.getDuration();
+        this.error = metricsConverter.isError();
+        this.traceId = metricsConverter.getTraceId();
+        this.serverIp = metricsConverter.getServerIp();
+        this.dataSource = metricsConverter.getDataSource();
+        this.sql = metricsConverter.getSql();
+        this.topic = metricsConverter.getTopic();
+        this.httpMethod = metricsConverter.getHttpMethod();
+        this.endTime = metricsConverter.getEndTime();
+        this.serverEnv = metricsConverter.getServerEnv();
+        this.serverEnvId = metricsConverter.getServerEnvId();
+        this.destApp = metricsConverter.getDestApp();
+        this.spanTypeGroup = metricsConverter.getSpanTypeGroup();
+    }
+
+    public MetricsConverter(){}
 }

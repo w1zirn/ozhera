@@ -57,7 +57,7 @@ public class LocalMetricsConverter extends BaseMetricsConverter {
                     multiMetricsCall.newCounter(buildMetricName(type, "SuccessCount"), customKeys)
                             .with(customValues)
                             .add(1, customValues);
-                    if (localConverter.getDuration() > getSlowThreshold(localConverter.getSpanType(), localConverter.getApplication())) {
+                    if (localConverter.getDuration() > getSlowThreshold(localConverter.getSpanType(), localConverter.getMetricsApplication())) {
                         multiMetricsCall.newCounter(buildMetricName(type, "SlowQuery"), customKeys)
                                 .with(customValues)
                                 .add(1, customValues);
