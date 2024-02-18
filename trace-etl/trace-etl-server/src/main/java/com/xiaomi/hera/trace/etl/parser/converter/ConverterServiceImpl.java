@@ -15,6 +15,7 @@
  */
 package com.xiaomi.hera.trace.etl.parser.converter;
 
+import com.xiaomi.data.push.client.Pair;
 import com.xiaomi.hera.trace.etl.api.AttributeService;
 import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
@@ -33,7 +34,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @Service
 @ConditionalOnProperty(name = "service.selector.property", havingValue = "outer")
-public class ConverterServiceImpl implements ConverterService{
+public class ConverterServiceImpl implements ConverterService {
 
     @Autowired
     private PeerService peerService;
@@ -65,7 +66,7 @@ public class ConverterServiceImpl implements ConverterService{
                 // for es type client call, take (http method + indexName) as methodName
                 // like PUT /mione-staging-zgq-jaeger-span
                 if (SpanType.elasticsearch.equals(clientConverter.getSpanType()) && StringUtils.isNotEmpty(clientConverter.getMethodName())) {
-                    String methodName = clientConverter.getMethodName();
+                    String methodName = clientConverter.getSql();
                     String[] arr = methodName.split("/");
                     if (arr.length >= 2) {
                         methodName = arr[0].concat("/").concat(arr[1]);
@@ -73,15 +74,15 @@ public class ConverterServiceImpl implements ConverterService{
                     clientConverter.setMethodName(methodName);
                 }
                 String dbName = attributeMap.get(TraceAttributes.DB_NAME);
-                String destApp = metaDataService.getMetricsMetaDataName(peerService.getPeer(spanHolder));
+                String peerIpPort = peerService.getPeer(spanHolder);
+                String destApp = metaDataService.getMetricsMetaDataName(peerIpPort);
                 if (SpanType.redis.equals(clientConverter.getSpanType())) {
-                    clientConverter.setMethodName("");
-                    clientConverter.setServiceName(destApp + "/" + dbName);
+                    clientConverter.setServiceName(destApp == null ? peerIpPort : destApp + ":" + getPort(peerIpPort));
                 }
                 if (destApp != null) {
                     clientConverter.setDataSource(destApp + "/" + dbName);
-                }else{
-                    String dataSource = spanHolder.getAttribute(TraceAttributes.DB_CONNECTION_STRING) + "/" + spanHolder.getAttribute(TraceAttributes.DB_NAME);
+                } else {
+                    String dataSource = spanHolder.getAttribute(TraceAttributes.DB_CONNECTION_STRING) + "/" + dbName;
                     clientConverter.setDataSource(dataSource);
                 }
                 break;
@@ -91,6 +92,13 @@ public class ConverterServiceImpl implements ConverterService{
                 break;
         }
         return clientConverter;
+    }
+
+    private String getPort(String ipPort){
+        if(ipPort.contains(":")){
+            return ipPort.split(":")[1];
+        }
+        return "";
     }
 
     @Override
@@ -122,16 +130,17 @@ public class ConverterServiceImpl implements ConverterService{
     public MetricsConverter getTopologyConverter(SpanHolder spanHolder) {
         String destApp = "";
         // only statistics dubbo redis mysql topology now
-        if(SpanType.dubbo.equals(spanHolder.getSpanType())) {
-            destApp = metaDataService.getMetricsMetaDataName(peerService.getPeer(spanHolder));
+        if (SpanType.dubbo.equals(spanHolder.getSpanType())) {
+            String peer = peerService.getPeer(spanHolder);
+            destApp = metaDataService.getMetricsMetaDataName(peer);
             if (destApp == null) {
                 return null;
             }
-        }else if(SpanType.mysql.equals(spanHolder.getSpanType())){
+        } else if (SpanType.mysql.equals(spanHolder.getSpanType())) {
             destApp = "mysql";
-        }else if(SpanType.redis.equals(spanHolder.getSpanType())){
+        } else if (SpanType.redis.equals(spanHolder.getSpanType())) {
             destApp = "redis";
-        }else{
+        } else {
             return null;
         }
         MetricsConverter topologyConverter = new MetricsConverter();
@@ -150,7 +159,7 @@ public class ConverterServiceImpl implements ConverterService{
         return ori;
     }
 
-    private void publicConvert(MetricsConverter converter, SpanHolder spanHolder){
+    private void publicConvert(MetricsConverter converter, SpanHolder spanHolder) {
         Map<String, String> attributeMap = spanHolder.getAttributeMap();
         converter.setTraceId(spanHolder.getTraceId());
         converter.setOperationName(spanHolder.getOperationName());
@@ -174,7 +183,7 @@ public class ConverterServiceImpl implements ConverterService{
             case MQ:
                 converter.setMethodName(attributeMap.getOrDefault(TraceAttributes.MESSAGING_OPERATION, ""));
                 String topic = attributeMap.get(TraceAttributes.MESSAGING_DESTINATION);
-                if(topic == null){
+                if (topic == null) {
                     // support 1.26.0
                     topic = attributeMap.get(TraceAttributes.MESSAGING_DESTINATION_NAME);
                 }

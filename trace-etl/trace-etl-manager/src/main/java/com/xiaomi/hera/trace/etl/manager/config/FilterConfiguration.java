@@ -20,6 +20,7 @@ import com.xiaomi.hera.trace.etl.manager.filter.RequestHeaderFilter;
 import com.xiaomi.mone.tpc.login.filter.HttpReqUserFilter;
 import com.xiaomi.mone.tpc.login.util.ConstUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,6 +46,7 @@ public class FilterConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "service.selector.property", havingValue = "outer")
     public FilterRegistrationBean filterCasBean() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(new HttpReqUserFilter());

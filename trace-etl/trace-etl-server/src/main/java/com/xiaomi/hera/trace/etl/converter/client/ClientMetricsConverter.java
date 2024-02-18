@@ -15,6 +15,7 @@
  */
 package com.xiaomi.hera.trace.etl.converter.client;
 
+import com.xiaomi.data.push.client.Pair;
 import com.xiaomi.hera.trace.etl.converter.BaseMetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket;
@@ -57,7 +58,7 @@ public abstract class ClientMetricsConverter extends BaseMetricsConverter {
                 } else {
                     multiMetricsCall.newCounter(buildMetricName(type, "ClientSuccessMethodCount"), httpKeys).with(httpValues).add(1, httpValues);
                     if (clientConverter.getDuration() > getSlowThreshold(clientConverter.getSpanType(), clientConverter.getMetricsApplication())) {
-                        multiMetricsCall.newCounter(buildMetricName("http", "SlowQuery"), httpKeys).with(httpValues).add(1, httpValues);
+                        multiMetricsCall.newCounter(buildMetricName("http", "ClientSlowQuery"), httpKeys).with(httpValues).add(1, httpValues);
                         errorSourceReceive.submitErrorTraceDomain(sourceObtainService.getSlowTraceSourceDomain(clientConverter));
                     }
                 }
@@ -82,8 +83,8 @@ public abstract class ClientMetricsConverter extends BaseMetricsConverter {
             case redis:
                 type = "Redis";
                 String[] redisKeys = tagKeys("host", "port", "method");
-                Map<String, String> result = parseDsn(clientConverter.getServiceName());
-                String[] redisValues = tagValues(clientConverter, defaultString(result.get("host")), defaultString(result.get("port")), clientConverter.getMethodName());
+                Pair<String, String> pair = splitIpPort(clientConverter.getServiceName());
+                String[] redisValues = tagValues(clientConverter, pair.getKey(), pair.getValue(), clientConverter.getMethodName());
 
                 multiMetricsCall.newCounter(buildMetricName(type, "TotalCount"), redisKeys).with(redisValues).add(1, redisValues);
                 multiMetricsCall.newHistogram(buildMetricName(type, "MethodTimeCost"), MetricsBucket.REDIS_BUCKET, redisKeys).with(redisValues).observe(clientConverter.getDuration(), redisValues);

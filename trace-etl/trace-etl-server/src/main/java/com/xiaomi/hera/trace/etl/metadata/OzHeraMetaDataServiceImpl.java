@@ -17,16 +17,15 @@ package com.xiaomi.hera.trace.etl.metadata;
 
 import com.xiaomi.hera.trace.etl.api.AttributeService;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
-import com.xiaomi.hera.trace.etl.domain.metrics.SpanType;
 import com.xiaomi.mone.app.api.model.HeraMetaDataModel;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service
 @ConditionalOnProperty(name = "service.selector.property", havingValue = "outer")
-public class OzHeraMetaDataServiceImpl implements OzHeraMetaDataService{
+public class OzHeraMetaDataServiceImpl implements OzHeraMetaDataService {
 
     @Autowired
     private AttributeService attributeService;
@@ -48,6 +47,9 @@ public class OzHeraMetaDataServiceImpl implements OzHeraMetaDataService{
 
     @Override
     public String getMetricsMetaDataName(String peerIpPort) {
+        if(StringUtils.isEmpty(peerIpPort)){
+            return null;
+        }
         HeraMetaDataModel heraMetaData = getHeraMetaData(peerIpPort);
         if(heraMetaData == null){
             return null;

@@ -13,28 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.domain.util;
+package com.xiaomi.hera.trace.etl.es.service.bloomfilter;
 
-public enum PeerType {
-    TCP("tcp"),
-    REDIS("redis"),
-    MYSQL("mysql"),
-    ORACLE("oracle"),
-    HBASE("hbase"),
-    MQ("mq"),
-    ELASTICSEARCH("elasticsearch");
+import com.google.common.hash.BloomFilter;
+import com.xiaomi.hera.tspandata.TSpanData;
 
-    private final String value;
+public interface BloomFilterService {
 
-    PeerType(String value) {
-        this.value = value;
-    }
+    boolean isExistLocal(String traceId, String serviceName, String spanName, String type, String order, TSpanData spanData);
 
-    public String getValue() {
-        return value;
-    }
+    BloomFilter<CharSequence> getLocalBloomFilter();
 
-    public String getSchema() {
-        return this.value + "://";
-    }
+    void addBatch(String traceId);
+
+    void createBloom();
+    void createBloom(String key);
+
+    void deleteBloom();
+
+    void updateBloom();
 }

@@ -13,28 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.domain.util;
+package com.xiaomi.hera.trace.etl.es.filter;
 
-public enum PeerType {
-    TCP("tcp"),
-    REDIS("redis"),
-    MYSQL("mysql"),
-    ORACLE("oracle"),
-    HBASE("hbase"),
-    MQ("mq"),
-    ELASTICSEARCH("elasticsearch");
+import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
+import com.xiaomi.hera.trace.etl.es.domain.FilterResult;
 
-    private final String value;
+public interface IFilterService {
 
-    PeerType(String value) {
-        this.value = value;
-    }
+    FilterResult filterBefore(String statusCode, String traceId, String spanName, String heraContext, String serviceName, long duration, SpanHolder spanHolder);
 
-    public String getValue() {
-        return value;
-    }
-
-    public String getSchema() {
-        return this.value + "://";
-    }
 }

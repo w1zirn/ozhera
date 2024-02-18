@@ -16,6 +16,7 @@
 package com.xiaomi.hera.trace.etl.converter;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
+import com.xiaomi.data.push.client.Pair;
 import com.xiaomi.hera.trace.etl.api.MetricsTagService;
 import com.xiaomi.hera.trace.etl.config.TraceConfig;
 import com.xiaomi.hera.trace.etl.consumer.MultiMetricsCall;
@@ -28,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,19 +129,12 @@ public class BaseMetricsConverter {
         }
     }
 
-    public Map<String, String> parseDsn(String dsn) {
-        Map<String, String> ret = new HashMap<>(2) {{
-            put("host", "");
-            put("port", "");
-        }};
-        try {
-            URI uri = new URI(dsn);
-            ret.put("host", uri.getHost());
-            ret.put("port", String.valueOf(uri.getPort()));
-            return ret;
-        } catch (Exception e) {
-            return ret;
+    public Pair<String, String> splitIpPort(String dsn) {
+        if(dsn.contains(":")){
+            String[] ipPort = dsn.split(":");
+            return new Pair<>(ipPort[0], ipPort[1]);
         }
+        return new Pair<>("","");
     }
 
     public Map<String, String> parseRPCServiceAndMethod(MetricsConverter serverConverter) {

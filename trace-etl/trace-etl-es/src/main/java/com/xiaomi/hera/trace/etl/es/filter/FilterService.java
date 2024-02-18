@@ -13,17 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.es.consumer;
+package com.xiaomi.hera.trace.etl.es.filter;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.hera.trace.etl.common.HashUtil;
+import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
+import com.xiaomi.hera.trace.etl.es.domain.Const;
+import com.xiaomi.hera.trace.etl.es.service.bloomfilter.BloomFilterService;
 import com.xiaomi.hera.trace.etl.service.HeraContextService;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import com.xiaomi.hera.trace.etl.es.config.TraceConfig;
 import com.xiaomi.hera.trace.etl.es.domain.FilterResult;
-import com.xiaomi.hera.trace.etl.es.util.bloomfilter.TraceIdRedisBloomUtil;
 import com.xiaomi.hera.trace.etl.util.MessageUtil;
-import com.xiaomi.hera.tspandata.TSpanData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +51,13 @@ public class FilterService {
     private int randomBase;
 
     @Autowired
-    private TraceIdRedisBloomUtil traceIdRedisBloomUtil;
+    private BloomFilterService bloomFilterService;
     @Autowired
     private TraceConfig traceConfig;
     @Autowired
     private HeraContextService heraContextService;
 
-    public FilterResult filterBefore(String statusCode, String traceId, String spanName, String heraContext, String serviceName, long duration, TSpanData tSpanData) {
+    public FilterResult filterBefore(String statusCode, String traceId, String spanName, String heraContext, String serviceName, long duration, SpanHolder spanHolder) {
         FilterResult filterResult = new FilterResult();
         // spanName Blacklist
         if (filterSpanName.contains(spanName)) {
@@ -91,8 +92,8 @@ public class FilterService {
                 filterResult.setAddBloom(false);
                 return filterResult;
             }
-            // Boolean filter judgement
-            if (traceIdRedisBloomUtil.isExistLocal(traceId)) {
+            // bloom filter judgement
+            if (bloomFilterService.isExistLocal(traceId, serviceName, spanName, Const.CONSUMER_TYPE, null, spanHolder.getSpan())) {
                 // If it exists in the bloom filter, there is no need to save it again.
                 filterResult.setResult(true);
                 filterResult.setAddBloom(false);

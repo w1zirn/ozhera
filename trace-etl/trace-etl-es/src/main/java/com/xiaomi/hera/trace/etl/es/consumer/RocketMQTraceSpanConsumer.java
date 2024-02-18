@@ -19,7 +19,7 @@ import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.hera.trace.etl.api.service.MQExtension;
 import com.xiaomi.hera.trace.etl.bo.MqConfig;
 import com.xiaomi.hera.trace.etl.domain.metrics.ThriftUtil;
-import com.xiaomi.hera.trace.etl.es.util.pool.ConsumerPool;
+import com.xiaomi.hera.trace.etl.es.service.pool.ConsumerPool;
 import com.xiaomi.hera.tspandata.TSpanData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQClientException;

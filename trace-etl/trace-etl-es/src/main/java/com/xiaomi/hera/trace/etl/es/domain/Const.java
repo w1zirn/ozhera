@@ -13,28 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.domain.util;
+package com.xiaomi.hera.trace.etl.es.domain;
 
-public enum PeerType {
-    TCP("tcp"),
-    REDIS("redis"),
-    MYSQL("mysql"),
-    ORACLE("oracle"),
-    HBASE("hbase"),
-    MQ("mq"),
-    ELASTICSEARCH("elasticsearch");
+public class Const {
 
-    private final String value;
+    public static final String CONSUMER_TYPE = "CONSUMER_TYPE";
+    public static final String ROCKS_TYPE = "ROCKS_TYPE";
+    public static volatile boolean REDIS_DOUBLE_READ = false;
 
-    PeerType(String value) {
-        this.value = value;
-    }
+     public static final String BLOOM_FILTER_TYPE_REDIS = "redis";
+     public static final String BLOOM_FILTER_TYPE_LOCAL = "local";
 
-    public String getValue() {
-        return value;
-    }
-
-    public String getSchema() {
-        return this.value + "://";
-    }
+    public static final String FIRST_ORDER = "first";
+    public static final String SECOND_ORDER = "second";
 }

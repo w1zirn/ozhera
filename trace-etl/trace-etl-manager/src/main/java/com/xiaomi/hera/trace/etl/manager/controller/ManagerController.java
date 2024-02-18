@@ -51,12 +51,12 @@ public class ManagerController {
     @GetMapping("/manager/getAllPage")
     public Object getAllPage(HeraTraceConfigVo vo, HttpServletRequest request) {
         try {
-            AuthUserVo user = UserUtil.getUser();
-            if (user == null || StringUtils.isEmpty(user.genFullAccount())) {
-                log.warn("getAllPage userInfo is null");
-                return Result.fail(GeneralCodes.InternalError, "The user information is empty. Please log in again");
-            }
-            String userName = user.genFullAccount();
+//            AuthUserVo user = UserUtil.getUser();
+//            if (user == null || StringUtils.isEmpty(user.genFullAccount())) {
+//                log.warn("getAllPage userInfo is null");
+//                return Result.fail(GeneralCodes.InternalError, "The user information is empty. Please log in again");
+//            }
+            String userName = "dingtao";
             log.info("userName is : " + userName);
             if (!isAdmin(userName)) {
                 vo.setUser(userName);

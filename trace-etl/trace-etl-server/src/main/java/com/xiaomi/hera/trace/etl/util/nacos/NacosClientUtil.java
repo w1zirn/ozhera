@@ -32,7 +32,7 @@ import java.net.InetAddress;
 import java.util.*;
 
 @Component
-@ConditionalOnProperty(name = "service.selector.property", havingValue = "outer")
+@ConditionalOnProperty(name = "prometheus.metrics.model", havingValue = "pull")
 public class NacosClientUtil {
 
     private static final Logger log = LoggerFactory.getLogger(NacosClientUtil.class);

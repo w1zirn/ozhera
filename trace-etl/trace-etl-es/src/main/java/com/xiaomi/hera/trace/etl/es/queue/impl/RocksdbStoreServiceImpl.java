@@ -46,8 +46,6 @@ public class RocksdbStoreServiceImpl implements DiskStoreService {
 
     private String keyPrefix;
 
-    public static final String FIRST_ORDER = "first";
-    public static final String SECOND_ORDER = "second";
 
     public RocksDB getRocksDB() {
         return rocksDB;

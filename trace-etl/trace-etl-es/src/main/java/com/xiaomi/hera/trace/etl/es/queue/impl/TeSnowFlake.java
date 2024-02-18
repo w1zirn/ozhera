@@ -17,7 +17,7 @@ package com.xiaomi.hera.trace.etl.es.queue.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xiaomi.data.push.common.SnowFlake;
-import com.xiaomi.hera.trace.etl.es.util.redis.RedisClientUtil;
+import com.xiaomi.hera.trace.etl.es.service.redis.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -46,7 +46,7 @@ public class TeSnowFlake extends SnowFlake implements InitializingBean {
 
     private String mId;
     @Autowired
-    private RedisClientUtil redis;
+    private RedisService redis;
 
     @Value("${gw.snowflake.datacenterId:0}")
     private long datacenterId;
