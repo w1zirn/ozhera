@@ -13,17 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.es.domain;
-
-import java.util.concurrent.atomic.AtomicLong;
+package com.xiaomi.hera.trace.etl.es.adapter;
 
 /**
- * @Description
- * @Author dingtao
- * @Date 2021/11/10 10:00 am
+ * This class is mainly used to encapsulate differentiated interfaces, uncertain interfaces,
+ * and interfaces that will be updated in the future, and so on.
  */
-public class LocalStorages {
-    public static AtomicLong firstRocksKeySuffix = new AtomicLong(0L);
-    public static AtomicLong secondRocksKeySuffix = new AtomicLong(0L);
+public interface IAdapter {
 
+    String getRedisPwd();
+
+    String getMid();
 }

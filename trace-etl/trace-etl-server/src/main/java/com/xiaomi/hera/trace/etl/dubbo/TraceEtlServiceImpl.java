@@ -20,6 +20,7 @@ import com.xiaomi.hera.trace.etl.api.service.TraceEtlService;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 /**
  * @Description
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Date 2022/4/25 3:09 下午
  */
 @Service(cluster = "broadcast",group = "${dubbo.group}")
+@ConditionalOnProperty(name = "trace.config.get.type", havingValue = "dubbo")
 public class TraceEtlServiceImpl implements TraceEtlService {
 
     @Autowired

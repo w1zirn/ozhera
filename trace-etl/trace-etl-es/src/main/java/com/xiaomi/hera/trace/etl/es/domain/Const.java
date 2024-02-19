@@ -26,4 +26,7 @@ public class Const {
 
     public static final String FIRST_ORDER = "first";
     public static final String SECOND_ORDER = "second";
+
+    public static final String FIRST_TIMESTAMP_REDIS_PREFIX = "first_new";
+    public static final String SECOND_TIMESTAMP_REDIS_PREFIX = "second_new";
 }

@@ -127,7 +127,7 @@ public class RocksdbStoreServiceImpl implements DiskStoreService {
         return null;
     }
 
-    public void delayTake(final String begin, Long gapBetweenLatest, Consumer<byte[]> listener, TeSnowFlake snowFlake) {
+    public void delayTake(final String begin, Long gapBetweenLatest, Consumer<byte[]> listener, RocksKeyUtil snowFlake) {
         ReadOptions readOptions = new ReadOptions();
         readOptions.setVerifyChecksums(false);
         String[] beginArr = begin.split("_");

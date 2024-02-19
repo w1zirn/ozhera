@@ -25,10 +25,9 @@ import com.xiaomi.hera.trace.etl.es.domain.FilterResult;
 import com.xiaomi.hera.trace.etl.es.domain.FutureRequest;
 import com.xiaomi.hera.trace.etl.es.domain.LocalStorages;
 import com.xiaomi.hera.trace.etl.es.filter.FilterService;
+import com.xiaomi.hera.trace.etl.es.queue.impl.RocksKeyUtil;
 import com.xiaomi.hera.trace.etl.es.queue.impl.RocksdbStoreServiceImpl;
-import com.xiaomi.hera.trace.etl.es.queue.impl.TeSnowFlake;
 import com.xiaomi.hera.trace.etl.es.service.bloomfilter.BloomFilterService;
-import com.xiaomi.hera.trace.etl.es.service.bloomfilter.LocalBloomFilterService;
 import com.xiaomi.hera.trace.etl.es.service.bloomfilter.RedisBloomFilterService;
 import com.xiaomi.hera.trace.etl.es.service.pool.ConsumerPool;
 import com.xiaomi.hera.trace.etl.es.service.redis.RedisService;
@@ -90,7 +89,7 @@ public class ConsumerService {
     @Autowired
     private DataSourceService dataSourceService;
     @Autowired
-    private TeSnowFlake snowFlake;
+    private RocksKeyUtil rocksKeyUtil;
     @Autowired
     private RedisService redisService;
 
@@ -125,8 +124,8 @@ public class ConsumerService {
     @PostConstruct
     public void init() {
         if (filterIsOpen) {
-            firstRocksdbStoreService = new RocksdbStoreServiceImpl(firstRocksPath, TeSnowFlake.FIRST_TIMESTAMP_REDIS_PREFIX);
-            secondRocksdbStoreService = new RocksdbStoreServiceImpl(secondRocksPath, TeSnowFlake.SECOND_TIMESTAMP_REDIS_PREFIX);
+            firstRocksdbStoreService = new RocksdbStoreServiceImpl(firstRocksPath, Const.FIRST_TIMESTAMP_REDIS_PREFIX);
+            secondRocksdbStoreService = new RocksdbStoreServiceImpl(secondRocksPath, Const.SECOND_TIMESTAMP_REDIS_PREFIX);
             // Initialize the rocksdb task for the first time
             initFirstRocksTask();
             // Initializes the second read rocksdb task
@@ -309,7 +308,7 @@ public class ConsumerService {
 
     private void initFirstRocksTask() {
         // Gets the timestamp of the last message read
-        String firstKey = snowFlake.recoverLastTimestamp(TeSnowFlake.FIRST_TIMESTAMP_REDIS_PREFIX);
+        String firstKey = rocksKeyUtil.recoverLastTimestamp(Const.FIRST_TIMESTAMP_REDIS_PREFIX);
         final String firstLastRocksKey = firstKey == null ?
                 System.currentTimeMillis() + "_" + LocalStorages.firstRocksKeySuffix.get() : firstKey;
         // The local message thread is read for the first time
@@ -327,7 +326,7 @@ public class ConsumerService {
                             }
                         });
                     }
-                }, snowFlake);
+                }, rocksKeyUtil);
             } catch (Throwable e) {
                 log.error("first get Rocks message error : ", e);
             }
@@ -336,7 +335,7 @@ public class ConsumerService {
 
     private void initSecondRocksTask() {
         // Gets the timestamp of the last message read
-        String secondKey = snowFlake.recoverLastTimestamp(TeSnowFlake.SECOND_TIMESTAMP_REDIS_PREFIX);
+        String secondKey = rocksKeyUtil.recoverLastTimestamp(Const.SECOND_TIMESTAMP_REDIS_PREFIX);
         final String secondLastRocksKey = secondKey == null ?
                 System.currentTimeMillis() + "_" + LocalStorages.secondRocksKeySuffix.get() : secondKey;
         // The local message thread is read for the sencond time
@@ -354,7 +353,7 @@ public class ConsumerService {
                             }
                         });
                     }
-                }, snowFlake);
+                }, rocksKeyUtil);
             } catch (Throwable e) {
                 log.error("second get Rocks message error : ", e);
             }

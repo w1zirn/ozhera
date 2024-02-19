@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -39,11 +40,16 @@ import static com.xiaomi.hera.trace.etl.es.domain.Const.ROCKS_TYPE;
 
 @Service
 @ConditionalOnProperty(name = "bloom.filter.type", havingValue = "redis")
+@Primary
 @Slf4j
 public class RedisBloomFilterService implements BloomFilterService {
 
-    @Autowired
     private RedisService redisService;
+
+    @Autowired
+    public void setRedisService(RedisService redisService){
+        this.redisService = redisService;
+    }
 
     @Resource
     private LocalBloomFilterService localBloomFilterService;
@@ -97,7 +103,13 @@ public class RedisBloomFilterService implements BloomFilterService {
 
     @Override
     public void addBatch(String traceId) {
-
+        getLocalBloomFilter().put(traceId);
+        int redisKeyIndex = consistentHash(traceId, ConsumerPool.CONSUMER_BATCH_REDIS_KEY_SIZE);
+        BlockingQueue<String> traceIds = ConsumerPool.BATCH_REDIS_ADD_QUEUE.get(redisKeyIndex);
+        if (traceIds.contains(traceId)) {
+            return;
+        }
+        traceIds.add(traceId);
     }
 
     private void batchExist(String traceId, String serviceName, String spanName, String type, String order, TSpanData tSpanData) {
@@ -147,7 +159,7 @@ public class RedisBloomFilterService implements BloomFilterService {
         try {
             bloomKeyOrder = redisService.getWithException(BLOOM_REDIS_KEY_ORDER);
         } catch (Exception e) {
-            log.error("failed to get redis key, exit the app");
+            log.error("failed to get redis key, exit the app", e);
             System.exit(-1);
         }
         if (StringUtils.isEmpty(bloomKeyOrder)) {
