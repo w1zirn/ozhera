@@ -20,6 +20,7 @@ import com.google.common.base.Joiner;
 import com.xiaomi.hera.trace.etl.api.service.DataSourceService;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
 import com.xiaomi.hera.trace.etl.domain.metrics.ThriftUtil;
+import com.xiaomi.hera.trace.etl.domain.util.BloomFilterType;
 import com.xiaomi.hera.trace.etl.es.domain.Const;
 import com.xiaomi.hera.trace.etl.es.domain.FilterResult;
 import com.xiaomi.hera.trace.etl.es.domain.FutureRequest;
@@ -130,7 +131,7 @@ public class ConsumerService {
             initFirstRocksTask();
             // Initializes the second read rocksdb task
             initSecondRocksTask();
-            if(Const.BLOOM_FILTER_TYPE_REDIS.equals(bloomFilterType)) {
+            if(BloomFilterType.BLOOM_FILTER_TYPE_REDIS.equals(bloomFilterType)) {
                 // Batch execute Redis BFMEXIST tasks.
                 redisExistBatch();
             }
@@ -151,7 +152,7 @@ public class ConsumerService {
                     // write into data source
                     dataSourceService.insertHeraSpan(tSpanData, split[1], split[2]);
                 } else if (Const.FIRST_ORDER.equals(order)) {
-                    if(Const.BLOOM_FILTER_TYPE_LOCAL.equals(bloomFilterType)) {
+                    if(BloomFilterType.BLOOM_FILTER_TYPE_LOCAL.equals(bloomFilterType)) {
                         insertRocks(split[0], split[1], split[2], tSpanData, Const.SECOND_ORDER);
                     }
                 }

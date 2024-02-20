@@ -13,17 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.xiaomi.hera.trace.etl.es.domain;
+package com.xiaomi.hera.trace.etl.domain.util;
 
-public class Const {
+public class BloomFilterType {
 
-    public static final String CONSUMER_TYPE = "CONSUMER_TYPE";
-    public static final String ROCKS_TYPE = "ROCKS_TYPE";
-    public static volatile boolean REDIS_DOUBLE_READ = false;
-
-    public static final String FIRST_ORDER = "first";
-    public static final String SECOND_ORDER = "second";
-
-    public static final String FIRST_TIMESTAMP_REDIS_PREFIX = "first_new";
-    public static final String SECOND_TIMESTAMP_REDIS_PREFIX = "second_new";
+    public static final String BLOOM_FILTER_TYPE_REDIS = "redis";
+    public static final String BLOOM_FILTER_TYPE_LOCAL = "local";
 }

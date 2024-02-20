@@ -15,6 +15,7 @@
  */
 package com.xiaomi.hera.trace.etl.es.scheduler;
 
+import com.xiaomi.hera.trace.etl.domain.util.BloomFilterType;
 import com.xiaomi.hera.trace.etl.es.domain.Const;
 import com.xiaomi.hera.trace.etl.es.service.bloomfilter.BloomFilterService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(name = "bloom.filter.type", havingValue = Const.BLOOM_FILTER_TYPE_LOCAL)
+@ConditionalOnProperty(name = "bloom.filter.type", havingValue = BloomFilterType.BLOOM_FILTER_TYPE_LOCAL)
 public class LocalBloomFilterScheduler {
 
     @Autowired

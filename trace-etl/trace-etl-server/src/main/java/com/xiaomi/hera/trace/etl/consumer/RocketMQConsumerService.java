@@ -21,6 +21,7 @@ import com.xiaomi.hera.trace.etl.api.service.IMetricsParseService;
 import com.xiaomi.hera.trace.etl.api.service.MQExtension;
 import com.xiaomi.hera.trace.etl.bo.MqConfig;
 import com.xiaomi.hera.trace.etl.domain.metrics.ThriftUtil;
+import com.xiaomi.hera.trace.etl.domain.util.BloomFilterType;
 import com.xiaomi.hera.tspandata.TSpanData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -59,6 +60,9 @@ public class RocketMQConsumerService {
     @Value("${mq.es.topic}")
     private String esTopicName;
 
+    @Value("${bloom.filter.type}")
+    private String bloomFilterType;
+
     @Resource
     private IEnterManager enterManager;
 
@@ -93,7 +97,12 @@ public class RocketMQConsumerService {
                     } catch (Throwable t) {
                         log.error("consumer message error", t);
                     }
-                    mq.sendByTraceId(traceId, message);
+                    if(BloomFilterType.BLOOM_FILTER_TYPE_LOCAL.equals(bloomFilterType)) {
+                        mq.sendByTraceId(traceId, message);
+                    }
+                }
+                if(!BloomFilterType.BLOOM_FILTER_TYPE_LOCAL.equals(bloomFilterType)) {
+                    mq.send(list);
                 }
                 return true;
             } finally {

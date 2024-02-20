@@ -25,15 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 import static com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket.DUBBO_BUCKET;
 import static com.xiaomi.hera.trace.etl.domain.metrics.MetricsBucket.HTTP_BUCKET;
-import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @Service
 @Slf4j
-public abstract class ClientMetricsConverter extends BaseMetricsConverter {
+public class ClientMetricsConverter extends BaseMetricsConverter {
 
     @Autowired
     private ErrorSourceReceive errorSourceReceive;

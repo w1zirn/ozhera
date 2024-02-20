@@ -15,6 +15,7 @@
  */
 package com.xiaomi.hera.trace.etl.es.scheduler;
 
+import com.xiaomi.hera.trace.etl.domain.util.BloomFilterType;
 import com.xiaomi.hera.trace.etl.es.domain.Const;
 import com.xiaomi.hera.trace.etl.es.service.bloomfilter.LocalBloomFilterService;
 import com.xiaomi.hera.trace.etl.es.service.bloomfilter.RedisBloomFilterService;
@@ -27,7 +28,7 @@ import javax.annotation.Resource;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(name = "bloom.filter.type", havingValue = Const.BLOOM_FILTER_TYPE_REDIS)
+@ConditionalOnProperty(name = "bloom.filter.type", havingValue = BloomFilterType.BLOOM_FILTER_TYPE_REDIS)
 public class RedisBloomFilterScheduler {
 
     @Resource
