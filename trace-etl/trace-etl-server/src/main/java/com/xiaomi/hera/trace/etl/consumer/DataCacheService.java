@@ -29,6 +29,7 @@ import io.prometheus.client.exporter.common.TextFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
  * @date 2023/8/29 10:02
  */
 @Service
+@ConditionalOnProperty(name = "prometheus.metrics.model", havingValue = "pull")
 @Slf4j
 public class DataCacheService {
 

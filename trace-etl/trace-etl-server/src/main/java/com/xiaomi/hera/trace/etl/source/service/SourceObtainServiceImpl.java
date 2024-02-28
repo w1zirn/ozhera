@@ -19,6 +19,7 @@ import com.xiaomi.hera.trace.etl.common.ErrorSpanUtils;
 import com.xiaomi.hera.trace.etl.config.EnvConfig;
 import com.xiaomi.hera.trace.etl.domain.converter.MetricsConverter;
 import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
+import com.xiaomi.hera.trace.etl.domain.metrics.SpanTypeGroup;
 import com.xiaomi.hera.trace.etl.domain.source.DriverSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.source.ErrorTraceSourceDomain;
 import com.xiaomi.hera.trace.etl.domain.trace.TraceAttributes;
@@ -72,7 +73,9 @@ public class SourceObtainServiceImpl implements SourceObtainService{
         domain.setType(ErrorSpanUtils.toErrorSpanType(metricsConverter.getSpanType(),metricsConverter.getSpanKind()));
         domain.setDomain(esDomain);
         domain.setHost(metricsConverter.getServerIp());
-        domain.setUrl(metricsConverter.getOperationName());
+        if(SpanTypeGroup.DATABASE.equals(metricsConverter.getSpanTypeGroup())){
+            domain.setUrl(metricsConverter.getSql());
+        }
         domain.setDataSource(metricsConverter.getDataSource());
         domain.setServiceName(metricsConverter.getMetricsApplication());
         domain.setTimestamp(String.valueOf(metricsConverter.getEndTime()));
