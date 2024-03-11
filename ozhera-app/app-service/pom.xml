@@ -5,15 +5,15 @@
     <parent>
         <artifactId>ozhera-app</artifactId>
         <groupId>run.mone</groupId>
-        <version>1.4-jdk21-SNAPSHOT</version>
+        <version>1.4-jdk21</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>app-service</artifactId>
     <version>${hera-app.release.version}</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -25,20 +25,17 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.3.1</version>
+            <version>3.4.3</version>
         </dependency>
         <!-- mybatis-plus代码生成器 -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-            <version>3.3.1.tmp</version>
-        </dependency>
-
+<!--        <dependency>-->
+<!--            <groupId>com.baomidou</groupId>-->
+<!--            <artifactId>mybatis-plus-generator</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <version>3.1.4</version>
         </dependency>
 
         <!-- datasource -->
@@ -57,7 +54,6 @@
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>nutz</artifactId>
-            <version>1.r.68-open-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -80,45 +76,61 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>4.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>spring-context-support</artifactId>
         </dependency>
 
         <!--dubbo-->
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>dubbo</artifactId>
-            <version>2.7.12-mone-v8-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alibaba.spring</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>nacos-client</artifactId>
-            <version>1.2.1-mone-v3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>nacos</artifactId>
-            <version>1.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>dubbo-registry-nacos</artifactId>
-            <version>1.2.1-mone-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-spring-context</artifactId>
-            <version>0.2.2-RC1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alibaba.spring</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--dubbo-->
 
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>4.9.1</version>
         </dependency>
 
         <dependency>
@@ -131,14 +143,12 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.70</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
-            <version>4.9.3</version>
             <exclusions>
                 <exclusion>
                     <artifactId>fastjson</artifactId>
@@ -149,7 +159,6 @@
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-acl</artifactId>
-            <version>4.9.3</version>
         </dependency>
 
     </dependencies>

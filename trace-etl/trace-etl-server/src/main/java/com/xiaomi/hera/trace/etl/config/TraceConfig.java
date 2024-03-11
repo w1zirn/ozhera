@@ -1,10 +1,26 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.hera.trace.etl.config;
 
 import com.xiaomi.hera.trace.etl.domain.HeraTraceConfigVo;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -27,18 +43,25 @@ public class TraceConfig {
     @Autowired
     private ManagerService managerService;
 
+    @Value("${trace.config.get.gap.minutes}")
+    private int configGetGapMinutes;
+    @Value("${trace.config.get.init.delay.minutes}")
+    private int configGetDelayMinutes;
+
     @PostConstruct
     public void init() {
         new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> {
             try {
                 List<HeraTraceEtlConfig> all = managerService.getAll(new HeraTraceConfigVo());
-                for (HeraTraceEtlConfig config : all) {
-                    heraTraceConfig.put(getServiceName(config), config);
+                if(all != null) {
+                    for (HeraTraceEtlConfig config : all) {
+                        heraTraceConfig.put(getServiceName(config), config);
+                    }
                 }
             }catch(Throwable t){
                 log.error("schedule trace config error : ",t);
             }
-        },  0,1, TimeUnit.HOURS);
+        },  configGetDelayMinutes,configGetGapMinutes, TimeUnit.MINUTES);
     }
 
     public HeraTraceEtlConfig getConfig(String serviceName) {
@@ -58,8 +81,8 @@ public class TraceConfig {
     }
 
     private String getServiceName(HeraTraceEtlConfig config) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(config.getBindId()).append("-").append(config.getAppName());
+        StringBuilder sb = new StringBuilder();
+        sb.append(config.getBindId()).append("_").append(config.getAppName().replaceAll("-", "_"));
         return sb.toString();
     }
 }

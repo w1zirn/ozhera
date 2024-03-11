@@ -1,10 +1,25 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.hera.trace.etl.manager.controller;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceConfigVo;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import com.xiaomi.hera.trace.etl.domain.PagerVo;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import com.xiaomi.mone.tpc.login.util.UserUtil;
 import com.xiaomi.mone.tpc.login.vo.AuthUserVo;
 import com.xiaomi.youpin.infra.rpc.Result;
@@ -36,14 +51,14 @@ public class ManagerController {
     @GetMapping("/manager/getAllPage")
     public Object getAllPage(HeraTraceConfigVo vo, HttpServletRequest request) {
         try {
-            AuthUserVo user = UserUtil.getUser();
-            if (user == null || StringUtils.isEmpty(user.genFullAccount())) {
-                log.warn("getAllPage userInfo is null");
-                return Result.fail(GeneralCodes.InternalError, "The user information is empty. Please log in again");
-            }
-            String userName = user.genFullAccount();
-            log.info("userName is : "+userName);
-            if(!isAdmin(userName)) {
+//            AuthUserVo user = UserUtil.getUser();
+//            if (user == null || StringUtils.isEmpty(user.genFullAccount())) {
+//                log.warn("getAllPage userInfo is null");
+//                return Result.fail(GeneralCodes.InternalError, "The user information is empty. Please log in again");
+//            }
+            String userName = "dingtao";
+            log.info("userName is : " + userName);
+            if (!isAdmin(userName)) {
                 vo.setUser(userName);
             }
             initPage(vo);
@@ -56,16 +71,17 @@ public class ManagerController {
 
     /**
      * Whether it is admin, the admin member list is configured by nacos.
+     *
      * @param user
      * @return
      */
     private boolean isAdmin(String user) {
-        if(StringUtils.isEmpty(adminMemList)){
+        if (StringUtils.isEmpty(adminMemList)) {
             return false;
         }
         String[] split = adminMemList.split(",");
-        for(String adminMem : split){
-            if(user.equals(adminMem)){
+        for (String adminMem : split) {
+            if (user.equals(adminMem)) {
                 return true;
             }
         }
@@ -102,7 +118,7 @@ public class ManagerController {
                 return Result.fail(GeneralCodes.InternalError, "The user information is empty. Please log in again");
             }
             String user = userInfo.genFullAccount();
-            log.info("insertOrUpdate user : "+user+" param : " + config);
+            log.info("insertOrUpdate user : " + user + " param : " + config);
             return managerService.insertOrUpdate(config, null);
         } catch (Exception e) {
             log.error("insert or update error : ", e);

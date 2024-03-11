@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.youpin.prometheus.agent.alertManagerClient;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
@@ -15,7 +30,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
@@ -26,7 +40,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.xiaomi.youpin.prometheus.agent.Commons.HTTP_POST;
 
-@Service
 @Slf4j
 public class AlertManagerClient implements Client {
 
@@ -67,7 +80,7 @@ public class AlertManagerClient implements Client {
     @Override
     public void GetLocalConfigs() {
         // Regularly query the database to find all undeleted alerts in pending status.
-        new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> {
+        new ScheduledThreadPoolExecutor(1).scheduleWithFixedDelay(() -> {
             try {
                 log.info("AlertManagerClient start GetLocalConfigs");
                 List<RuleAlertEntity> allRuleAlertList = ruleAlertService.GetAllRuleAlertList();
@@ -105,7 +118,7 @@ public class AlertManagerClient implements Client {
     @SneakyThrows
     public void CompareAndReload() {
 
-        new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> {
+        new ScheduledThreadPoolExecutor(1).scheduleWithFixedDelay(() -> {
             // If there are any changes, call the reload interface, and directly reload the first phase.
             // Read local rule configuration file.
             try {

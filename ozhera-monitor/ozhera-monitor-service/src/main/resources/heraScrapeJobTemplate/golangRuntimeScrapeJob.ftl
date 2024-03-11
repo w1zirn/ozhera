@@ -3,7 +3,7 @@
 "zone": "ksywq",
 "env": "online",
 "job_name": "mione-golang-runtime",
-"scrape_interval": "1m",
+"scrape_interval": "30s",
 "scrape_timeout": "10s",
 "metrics_path": "/metrics",
 "honor_labels": false,
@@ -29,7 +29,7 @@
 ],
 "http_sd_configs": [
 {
-"url": "http://prometheus-agent:8080/prometheus/getHeraAppPodIp"
+"url": "http://prometheus-agent.ozhera-namespace:8080/prometheus/getHeraAppPodIp"
 }
 ]
 }

@@ -1,7 +1,21 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.youpin.prometheus.agent.service;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
-import com.alibaba.nacos.common.util.Md5Utils;
 import com.aliyun.dingtalkcard_1_0.models.RegisterCallbackResponse;
 import com.aliyun.dingtalkim_1_0.Client;
 import com.aliyun.dingtalkim_1_0.models.SendRobotInteractiveCardHeaders;
@@ -13,13 +27,7 @@ import com.aliyun.dingtalkoauth2_1_0.models.GetAccessTokenResponse;
 import com.aliyun.tea.TeaException;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyun.teautil.models.RuntimeOptions;
-import com.dingtalk.api.DefaultDingTalkClient;
-import com.dingtalk.api.DingTalkClient;
-import com.dingtalk.api.request.OapiV2UserGetRequest;
-import com.dingtalk.api.response.OapiV2UserGetResponse;
 import com.google.common.cache.Cache;
-import com.taobao.api.ApiException;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +36,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhangxiaowei6
@@ -91,25 +101,32 @@ public class DingDingService {
         dingCardClient = new com.aliyun.dingtalkcard_1_0.Client(dingConfig);
         dingOauthClient = new com.aliyun.dingtalkoauth2_1_0.Client(dingConfig);
         //registerDingDingCallBack();
-        //fill in white list
-        if (!StringUtils.isBlank(whiteListStr)) {
-            List<String> whiteList = Arrays.asList(whiteListStr.split(",", -1));
-            log.info("DingDingService init whiteList is :{}", whiteList);
-            if (whiteList.size() % 2 != 0) {
-                log.error("DingDingService sendDingDing whiteList error , because whiteList size is not even");
-                return;
-            }
-            //fill in map
-            for (int i = 0; i < whiteList.size(); i = i + 2) {
-                whiteListMap.put(whiteList.get(i), whiteList.get(i + 1));
-            }
-        }
         //user type judge
         if (!dingdingUserType.equals("userId") && !dingdingUserType.equals("unionId")) {
             log.error("DingDingService.userType not valid, userType: {}",dingdingUserType);
             //set default value
             dingdingUserType = "userId";
         }
+        periodicRefreshWhiteList();
+    }
+
+    //2m auto refresh white list
+    private void periodicRefreshWhiteList() {
+        new ScheduledThreadPoolExecutor(1).scheduleWithFixedDelay(() -> {
+            //fill in white list
+            if (!StringUtils.isBlank(whiteListStr)) {
+                List<String> whiteList = Arrays.asList(whiteListStr.split(",", -1));
+                log.info("DingDingService init whiteList is :{}", whiteList);
+                if (whiteList.size() % 2 != 0) {
+                    log.error("DingDingService sendDingDing whiteList error , because whiteList size is not even");
+                    return;
+                }
+                //fill in map
+                for (int i = 0; i < whiteList.size(); i = i + 2) {
+                    whiteListMap.put(whiteList.get(i), whiteList.get(i + 1));
+                }
+            }
+        }, 0, 120, TimeUnit.SECONDS);
     }
 
     private String getAccessToken() {
@@ -238,7 +255,8 @@ public class DingDingService {
     }
 
     public String getNameByUserId(String userId) {
-        String token = getAccessToken();
+        return "unKnown";
+        /*String token = getAccessToken();
         if (token == null) {
             log.error("DingDingService getNameByUserId token is null");
             return null;
@@ -254,6 +272,6 @@ public class DingDingService {
         } catch (ApiException e) {
             log.error("DingDingService getNameByUserId err:{}", e);
             return null;
-        }
+        }*/
     }
 }

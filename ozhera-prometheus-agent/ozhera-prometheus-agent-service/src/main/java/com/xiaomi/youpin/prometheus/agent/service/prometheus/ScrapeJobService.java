@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.youpin.prometheus.agent.service.prometheus;
 
 import com.google.gson.Gson;
@@ -73,7 +88,8 @@ public class ScrapeJobService {
         ScrapeConfigEntity scrapeConfigEntity = new ScrapeConfigEntity();
         scrapeConfigEntity.setId(Long.parseLong(id));
         scrapeConfigEntity.setBody(gson.toJson(getScrapeJobBody(param)));
-        scrapeConfigEntity.setJobName(param.getJob_name());
+        // not allow update job_name
+        //scrapeConfigEntity.setJobName(param.getJob_name());
         scrapeConfigEntity.setUpdateTime(new Date());
         String res = dao.UpdateScrapeConfigList(id, scrapeConfigEntity);
         log.info("ScrapeJobService.UpdateScrapeConfig res: {}", res);
@@ -98,6 +114,11 @@ public class ScrapeJobService {
         return scrapeConfigEntities;
     }
 
+    public List<ScrapeConfigEntity> getAllCloudScrapeConfigList(String status) {
+        List<ScrapeConfigEntity> scrapeConfigEntities = dao.GetAllCloudScrapeConfigList(status);
+        return scrapeConfigEntities;
+    }
+
     public void setPendingScrapeConfig() {
         List<ScrapeConfigEntity> allScrapeConfigList = getAllScrapeConfigList(ScrapeJobStatusEnum.SUCCESS.getDesc());
         if (allScrapeConfigList.size() > 0) {
@@ -117,6 +138,12 @@ public class ScrapeJobService {
             failNum.addAndGet(-affectRow);
         });
         log.info("ScrapeJobService.updateScrapeConfigListStatus fail num:{}", failNum.get());
+    }
+
+    public void updateAllScrapeConfigDeleteToDone(Scrape_configs config) {
+        log.info("ScrapeJobService.updateScrapeConfigListStatus  status : {}",ScrapeJobStatusEnum.DONE.getDesc());
+        int affectRow = dao.UpdateScrapeConfigDeleteToDone(config.getJob_name());
+        log.info("ScrapeJobService.updateAllScrapeConfigDeleteToDone affectRow num:{}", affectRow);
     }
 
     private ScrapeConfigParam beforeCreateJob(ScrapeConfigParam param) {

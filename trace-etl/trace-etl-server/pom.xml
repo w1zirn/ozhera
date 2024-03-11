@@ -5,7 +5,7 @@
     <parent>
         <artifactId>trace-etl</artifactId>
         <groupId>run.mone</groupId>
-        <version>1.0.0-jdk21-SNAPSHOT</version>
+        <version>1.0.1-jdk21-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,41 +15,39 @@
     <dependencies>
 
         <dependency>
-            <artifactId>trace-etl-service</artifactId>
-            <groupId>run.mone</groupId>
-            <version>1.0.0-jdk21-SNAPSHOT</version>
-        </dependency>
-
-
-        <dependency>
             <groupId>com.squareup.okio</groupId>
             <artifactId>okio</artifactId>
-            <version>3.5.0</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
-            <artifactId>docean-spring-starter</artifactId>
-            <version>1.4-jdk20-SNAPSHOT</version>
+            <artifactId>trace-etl-kafka-extension</artifactId>
+            <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-reload4j</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-
-        <dependency>
-            <groupId>run.mone</groupId>
-            <artifactId>docean</artifactId>
-            <version>1.4-java20-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>run.mone</groupId>
-            <artifactId>docean-plugin-spring</artifactId>
-            <version>1.4-SNAPSHOT</version>
-        </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>trace-etl-rocketmq-extension</artifactId>
-            <version>1.0.0-jdk21-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>trace-etl-doris-extension</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>trace-etl-es-extension</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
@@ -57,8 +55,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>run.mone</groupId>
+            <artifactId>app-api</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
 
@@ -77,37 +79,6 @@
             </resource>
         </resources>
 
-        <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <compilerVersion>21</compilerVersion>
-                    <source>21</source>
-                    <target>21</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.7.15</version>
-                <configuration>
-                    <mainClass>com.xiaomi.hera.trace.etl.bootstrap.TraceEtlBootstrap</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-
     </build>
 
     <profiles>
@@ -121,6 +92,48 @@
                 <filters>
                     <filter>src/main/resources/config/opensource-outer.properties</filter>
                 </filters>
+
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <version>2.7.15</version>
+                        <configuration>
+                            <mainClass>com.xiaomi.hera.trace.etl.bootstrap.TraceEtlBootstrap</mainClass>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>repackage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>opensource-deploy</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <profileActive>opensource-deploy</profileActive>
+            </properties>
+            <build>
+                <filters>
+                    <filter>src/main/resources/config/opensource-outer.properties</filter>
+                </filters>
+
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <excludes>
+                            <exclude>application.properties</exclude>
+                        </excludes>
+                    </resource>
+                </resources>
             </build>
         </profile>
 

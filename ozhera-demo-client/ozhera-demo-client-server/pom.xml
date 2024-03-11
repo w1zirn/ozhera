@@ -5,17 +5,23 @@
     <parent>
         <artifactId>ozhera-demo-client</artifactId>
         <groupId>run.mone</groupId>
-        <version>1.0.0-jdk21-SNAPSHOT</version>
+        <version>1.0.0-jdk21</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ozhera-demo-client-server</artifactId>
 
+    <properties>
+        <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
+        <os-maven-plugin.version>1.6.1</os-maven-plugin.version>
+    </properties>
 
     <dependencies>
 
         <dependency>
+            <groupId>run.mone</groupId>
             <artifactId>ozhera-demo-client-service</artifactId>
+            <version>${project.parent.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>spring-boot-starter-logging</artifactId>
@@ -30,27 +36,23 @@
                     <groupId>org.springframework.boot</groupId>
                 </exclusion>
             </exclusions>
-            <groupId>run.mone</groupId>
-            <version>1.0.0-jdk21-SNAPSHOT</version>
+
         </dependency>
 
         <!--Alibaba nacos-->
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>dubbo-registry-nacos</artifactId>
-            <version>1.2.1-mone-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>1.0.10-mone-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-spring-context</artifactId>
-            <version>0.3.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
@@ -74,7 +76,6 @@
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>nacos-client</artifactId>
-            <version>1.2.1-mone-v3-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -98,13 +99,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.2</version>
         </dependency>
 
         <dependency>
             <groupId>run.mone</groupId>
             <artifactId>prometheus-diy-starter</artifactId>
-            <version>0.0.1-opensource-jdk21-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba.nacos</groupId>
@@ -112,10 +111,23 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>net.devh</groupId>
+            <artifactId>grpc-spring-boot-starter</artifactId>
+        </dependency>
     </dependencies>
 
 
     <build>
+
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>${os-maven-plugin.version}</version>
+            </extension>
+        </extensions>
 
         <resources>
             <resource>
@@ -141,7 +153,25 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protobuf-maven-plugin.version}</version>
+                <configuration>
+                    <!-- 在MAC arm64芯片上编译时，需要将${os.detected.classifier}修改为osx-x86_64 -->
+                    <protocArtifact>com.google.protobuf:protoc:3.24.0:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.58.0:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 
     </build>

@@ -1,5 +1,22 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.mone.app.service.env;
 
+import com.alibaba.nacos.api.config.annotation.NacosValue;
+import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.google.common.collect.Lists;
 import com.xiaomi.data.push.nacos.NacosNaming;
@@ -26,16 +43,47 @@ public class DefaultNacosEnvIpFetch implements EnvIpFetch {
     @Resource
     private NacosNaming nacosNaming;
 
+    @NacosValue(value = "${app_log_agent_max:30}", autoRefreshed = true)
+    private String appLoAgentMax;
+
+    @NacosValue(value = "${app_log_agent_id:10010}", autoRefreshed = true)
+    private String appLogAgentId;
+
+    @NacosValue(value = "${app_log_agent_name:log-agent}", autoRefreshed = true)
+    private String appLogAgentName;
+
     @Override
     public HeraAppEnvVo fetch(Long appBaseId, Long appId, String appName) throws Exception {
-        if(StringUtils.isNotEmpty(appName)){
-            appName = appName.replaceAll("-","_");
+        if (StringUtils.isNotEmpty(appName)) {
+            appName = appName.replaceAll("-", "_");
         }
-        List<Instance> instances = nacosNaming.getAllInstances(String.format("%s_%s_%s", SERVER_PREFIX, appId, appName));
+        String serviceName = String.format("%s_%s_%s", SERVER_PREFIX, appId, appName);
+        List<Instance> instances = nacosNaming.getAllInstances(serviceName);
+        handleLogAgentEnv(serviceName, appName, appId, instances);
         List<HeraAppEnvVo.EnvVo> envVos = getEnvVos(instances);
+
         return buildHeraAppEnvVo(appBaseId, appId, appName, envVos);
     }
 
+    private void handleLogAgentEnv(String serviceNamePrefix, String appName, Long appId, List<Instance> instances) throws NacosException {
+        if (isLogAgent(appName, appId)) {
+            fetchAndAddLogAgentInstances(serviceNamePrefix, instances);
+        }
+    }
+
+    private boolean isLogAgent(String appName, Long appId) {
+        return Objects.equals(appName, appLogAgentName) && Objects.equals(appId, Long.valueOf(appLogAgentId));
+    }
+
+    private void fetchAndAddLogAgentInstances(String serviceNamePrefix, List<Instance> instances) throws NacosException {
+        for (int i = 0; i <= Integer.valueOf(appLoAgentMax); i++) {
+            String serviceName = String.format("%s_%s", serviceNamePrefix, i);
+            List<Instance> currentInstances = nacosNaming.getAllInstances(serviceName);
+            if (CollectionUtils.isNotEmpty(currentInstances)) {
+                instances.addAll(currentInstances);
+            }
+        }
+    }
 
     private List<HeraAppEnvVo.EnvVo> getEnvVos(List<Instance> instances) {
         List<HeraAppEnvVo.EnvVo> envVos = Lists.newArrayList();

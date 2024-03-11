@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.youpin.prometheus.agent.util;
 
 
@@ -25,7 +40,7 @@ public class FileUtil {
             }
             String content = FileUtils.readFileToString(file, "UTF-8");
             return content;
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -45,7 +60,7 @@ public class FileUtil {
             }
             FileUtils.write(file, content);
             return "success";
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -58,6 +73,25 @@ public class FileUtil {
         return file.exists();
     }
 
+    // Verify the existence of the specified file; return 'not exist' if it is absent, or read and return the content string if it is present.
+    @SneakyThrows
+    public static String checkAndReadFile(String path) {
+        lock.lock();
+        try {
+            log.info("FileUtil checkAndReadFile path: {}", path);
+            File file = new File(path);
+            if (!file.exists()) {
+                return "not exist";
+            }
+            if (!isCanReadFile(file)) {
+                return "";
+            }
+            return FileUtils.readFileToString(file, "UTF-8");
+        } finally {
+            lock.unlock();
+        }
+    }
+
     //Delete file.
     @SneakyThrows
     public static boolean DeleteFile(String path) {
@@ -67,7 +101,7 @@ public class FileUtil {
             File file = new File(path);
             boolean delete = file.delete();
             return delete;
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -100,7 +134,7 @@ public class FileUtil {
             }
             boolean res = file.renameTo(new File(newPath));
             return res;
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
@@ -114,7 +148,7 @@ public class FileUtil {
             if (!file.exists()) {
                 file.createNewFile();
             }
-        }finally {
+        } finally {
             lock.unlock();
         }
     }

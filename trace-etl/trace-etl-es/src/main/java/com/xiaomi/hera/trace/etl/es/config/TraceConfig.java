@@ -1,9 +1,24 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.hera.trace.etl.es.config;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceConfigVo;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -41,10 +56,10 @@ public class TraceConfig {
                 for (HeraTraceEtlConfig config : all) {
                     heraTraceConfig.put(getServiceName(config), defalueConfig(config));
                 }
-            }catch(Throwable t){
-                log.error("schedule trace config error : ",t);
+            } catch (Throwable t) {
+                log.error("schedule trace config error : ", t);
             }
-        },  0,1, TimeUnit.HOURS);
+        }, 0, 1, TimeUnit.HOURS);
     }
 
     public HeraTraceEtlConfig getConfig(String serviceName) {
@@ -52,17 +67,17 @@ public class TraceConfig {
     }
 
     public void insert(HeraTraceEtlConfig config) {
-        log.info("trace insert config : "+config);
+        log.info("trace insert config : " + config);
         heraTraceConfig.putIfAbsent(getServiceName(config), defalueConfig(config));
     }
 
     public void update(HeraTraceEtlConfig config) {
-        log.info("trace update config : "+config);
+        log.info("trace update config : " + config);
         heraTraceConfig.put(getServiceName(config), defalueConfig(config));
     }
 
     public void delete(HeraTraceEtlConfig config) {
-        log.info("trace delete config : "+config);
+        log.info("trace delete config : " + config);
         heraTraceConfig.remove(getServiceName(config));
     }
 
@@ -72,14 +87,14 @@ public class TraceConfig {
         return sb.toString();
     }
 
-    private HeraTraceEtlConfig defalueConfig(HeraTraceEtlConfig config){
-        if(config == null){
+    private HeraTraceEtlConfig defalueConfig(HeraTraceEtlConfig config) {
+        if (config == null) {
             return null;
         }
-        if(config.getTraceFilter() == null){
+        if (config.getTraceFilter() == null) {
             config.setTraceFilter(threshold);
         }
-        if(config.getTraceDurationThreshold() == null){
+        if (config.getTraceDurationThreshold() == null) {
             config.setTraceDurationThreshold(durationThreshold);
         }
         return config;

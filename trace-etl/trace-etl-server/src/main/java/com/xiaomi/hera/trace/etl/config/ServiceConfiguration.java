@@ -1,15 +1,29 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.hera.trace.etl.config;
 
+import com.xiaomi.hera.trace.etl.domain.ConfigGetType;
 import com.xiaomi.hera.trace.etl.mapper.HeraTraceEtlConfigMapper;
-import com.xiaomi.hera.trace.etl.service.ManagerService;
-import com.xiaomi.hera.trace.etl.service.WriteEsService;
-import com.xiaomi.hera.trace.etl.util.es.EsTraceUtil;
-import com.xiaomi.mone.es.EsProcessor;
+import com.xiaomi.hera.trace.etl.service.DubboManagerService;
+import com.xiaomi.hera.trace.etl.service.HttpManagerService;
+import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * @Description
@@ -19,23 +33,23 @@ import javax.annotation.Resource;
 @Configuration
 public class ServiceConfiguration {
 
-    @Autowired
+    @Value("${trace.config.get.type}")
+    private String configGetType;
+
+    @Value("${trace.config.get.http.domain}")
+    private String configGetHttpDomain;
+
+    @Autowired(required = false)
     private HeraTraceEtlConfigMapper heraTraceEtlConfigMapper;
-
-    @Autowired
-    private EsProcessor esProcessor;
-
-    @Resource(name = "errorEsProcessor")
-    private EsProcessor errorEsProcessor;
 
     @Bean
     public ManagerService managerService(){
-        return new ManagerService(heraTraceEtlConfigMapper);
+        if(ConfigGetType.HTTP.equals(configGetType)){
+            return new HttpManagerService(configGetHttpDomain);
+        }else {
+            return new DubboManagerService(heraTraceEtlConfigMapper);
+        }
     }
 
-    @Bean
-    public WriteEsService writeEsService(){
-        return new WriteEsService(new EsTraceUtil(esProcessor, errorEsProcessor));
-    }
 
 }

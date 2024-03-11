@@ -7,22 +7,21 @@ import com.xiaomi.mone.monitor.service.helper.ProjectHelper;
 import com.xiaomi.mone.monitor.service.model.PageData;
 import com.xiaomi.mone.monitor.service.model.middleware.DbInstanceQuery;
 import com.xiaomi.mone.monitor.service.model.prometheus.EsIndexDataType;
-import com.xiaomi.mone.monitor.service.model.prometheus.Metric;
 import com.xiaomi.mone.monitor.service.model.prometheus.MetricDetail;
 import com.xiaomi.mone.monitor.service.model.prometheus.MetricDetailQuery;
-import com.xiaomi.mone.monitor.service.prometheus.PrometheusService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.core.CountRequest;
-import org.elasticsearch.core.TimeValue;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -36,6 +35,7 @@ import java.util.*;
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "metric.detail.datasource.property", havingValue = "es")
 public class EsService {
 
 
@@ -48,20 +48,17 @@ public class EsService {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
 
     @Autowired
-    PrometheusService prometheusService;
-
-    @Autowired
     private EsExtensionService esExtensionService;
 
     public EsService() {
     }
 
 
-    public Result query(String index, MetricDetailQuery param, Integer page, Integer pageSize) throws IOException {
+    public Result query(MetricDetailQuery param, Integer page, Integer pageSize) throws IOException {
 
         String exceptionTraceDomain = esExtensionService.getExceptionTraceDomain(param.getAppSource());
         Map<String, String> labels = param.convertEsParam(exceptionTraceDomain);
-
+        String index = esExtensionService.getIndex(param);
         if (StringUtils.isEmpty(index)) {
             log.error("EsService.query error! esIndex is empty!");
             return null;
@@ -106,7 +103,6 @@ public class EsService {
                 qb.must(rangeQueryBuilder);
 
             }
-
 
             sqb.query(qb);
         }
@@ -205,37 +201,6 @@ public class EsService {
             map.put("lastCreateTime", Long.valueOf(lastCreateTime));
         }
 
-        /**
-         * 异常类型的可用率计算
-         */
-
-        if ("timeout".equals(param.getErrorType())) {
-
-            String projectName = param.getProjectId() + "_" + param.getProjectName();
-            Map proQLLabels = param.convertPrometheusParam();
-
-
-            double rate = 100d;
-            if ("http".equals(param.getType())) {
-                rate = caculateUseRate("aopTotalMethodCount", "httpError", proQLLabels, projectName, param.getStartTime(), param.getEndTime(), lastCreateTime);
-            }
-            if ("http_client".equals(param.getType())) {
-                rate = caculateUseRate("aopClientTotalMethodCount", "httpClientError", proQLLabels, projectName, param.getStartTime(), param.getEndTime(), lastCreateTime);
-            }
-            if ("dubbo_consumer".equals(param.getType())) {
-                rate = caculateUseRate("dubboBisTotalCount", "dubboConsumerError", proQLLabels, projectName, param.getStartTime(), param.getEndTime(), lastCreateTime);
-            }
-            if ("dubbo_provider".equals(param.getType())) {
-                rate = caculateUseRate("dubboInterfaceCalledCount", "dubboProviderError", proQLLabels, projectName, param.getStartTime(), param.getEndTime(), lastCreateTime);
-            }
-            if ("mysql".equals(param.getType())) {
-                rate = caculateUseRate("sqlTotalCount", "dbError", proQLLabels, projectName, param.getStartTime(), param.getEndTime(), lastCreateTime);
-            }
-
-            map.put("availability", rate);
-
-        }
-
         if ("error".equals(param.getErrorType()) && projectHelper.accessLogSys(param.getProjectName(), param.getProjectId(), param.getAppSource())) {
             map.put("access_log", "1");
         }
@@ -245,54 +210,6 @@ public class EsService {
         return Result.success(pd);
     }
 
-    private double caculateUseRate(String totalMetric, String errorMetric, Map labels, String projectName, Long startTime, Long endTime, String lastTime) {
-
-        if (endTime == null) {
-            /**
-             * 前端没有传时间参数兼容，默认当前时间向前3h
-             */
-            log.info("caculateUseRate Param Error! endTime is null!projectName:{},errorMetric:{},", projectName, errorMetric);
-            endTime = System.currentTimeMillis();
-            startTime = endTime - 3 * 60 * 60 * 1000;
-        }
-
-        Long durarionSecond = (endTime - startTime) / 1000;
-        String durarion = (endTime - startTime) / 1000 + "s";
-        Result<PageData> total = prometheusService.queryIncrease(totalMetric, labels, projectName, "_total", startTime, endTime, durarionSecond, durarion);
-
-        //没有总数，返回100%
-        if (total.getData() == null) {
-            return 100d;
-        }
-
-        //没有总数，返回100%
-        List<Metric> result = (List<Metric>) total.getData().getList();
-        if (CollectionUtils.isEmpty(result)) {
-            return 100d;
-        }
-
-        Metric metric = result.get(0);
-        double valueTotal = metric.getValue();
-
-        Result<PageData> errors = prometheusService.queryIncrease(errorMetric, labels, projectName, "_total", startTime, endTime, null, null);
-
-        //没有错误，返回100%
-        if (errors.getData() == null) {
-            return 100d;
-        }
-
-        //没有错误数，返回100%
-        List<Metric> errorMetrics = (List<Metric>) errors.getData().getList();
-        if (CollectionUtils.isEmpty(errorMetrics)) {
-            return 100d;
-        }
-
-        Metric error = errorMetrics.get(0);
-        double valueError = error.getValue();
-
-        return (valueTotal - valueError) / valueTotal;
-
-    }
 
     public Result queryMiddlewareInstance(DbInstanceQuery param, Integer page, Integer pageSize) throws IOException {
         return esExtensionService.queryMiddlewareInstance(param, page, pageSize, esQueryTimeOut);

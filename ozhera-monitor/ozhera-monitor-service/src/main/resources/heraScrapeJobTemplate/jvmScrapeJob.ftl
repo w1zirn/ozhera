@@ -3,7 +3,7 @@
 "zone": "ksywq",
 "env":"online",
 "job_name":"mione-yewujiankong-china-jvm",
-"scrape_interval":"1m",
+"scrape_interval":"30s",
 "scrape_timeout":"10s",
 "metrics_path":"/jvm",
 "honor_labels":false,
@@ -29,7 +29,7 @@
 ],
 "http_sd_configs":[
 {
-"url":"http://prometheus-agent:8080/prometheus/getips?type=2"
+"url":"http://prometheus-agent.ozhera-namespace:8080/prometheus/getips?type=2"
 }
 ]
 }

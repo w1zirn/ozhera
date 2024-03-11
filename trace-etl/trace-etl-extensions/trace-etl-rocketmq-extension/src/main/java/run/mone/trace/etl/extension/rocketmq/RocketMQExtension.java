@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package run.mone.trace.etl.extension.rocketmq;
 
 import com.xiaomi.hera.trace.etl.api.service.MQExtension;
@@ -13,6 +28,7 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.message.MessageQueue;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,9 +40,10 @@ import java.util.function.Function;
  * @author goodjava@qq.com
  * @date 2023/9/19 17:00
  */
-@Service("rocketMQ")
+@Service
+@ConditionalOnProperty(name = "mq.type", havingValue = "rocketMQ")
 @Slf4j
-public class RocketMQExtension implements MQExtension<MessageExt> {
+public class RocketMQExtension implements MQExtension<MessageExt, MessageExt> {
 
     private Function<List<MessageExt>, Boolean> batchConsumerMethod;
 
@@ -42,7 +59,9 @@ public class RocketMQExtension implements MQExtension<MessageExt> {
         if(StringUtils.isNotEmpty(config.getProducerTopicName())) {
             initProducer(config);
         }
-        initConsumer(config);
+        if(StringUtils.isNotEmpty(config.getConsumerTopicName())) {
+            initConsumer(config);
+        }
     }
 
     private void initProducer(MqConfig<MessageExt> config){
@@ -106,6 +125,11 @@ public class RocketMQExtension implements MQExtension<MessageExt> {
     @Override
     public void sendByTraceId(String traceId, MessageExt message) {
         clientMessageQueue.enqueue(traceId, message);
+    }
+
+    @Override
+    public void shutDownConsumer() {
+
     }
 
     private class TraceEtlMessageListener implements MessageListenerConcurrently {

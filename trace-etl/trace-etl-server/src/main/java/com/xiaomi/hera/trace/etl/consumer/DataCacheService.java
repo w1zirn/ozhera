@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Xiaomi
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package com.xiaomi.hera.trace.etl.consumer;
 
 import com.alibaba.nacos.api.config.annotation.NacosValue;
@@ -14,6 +29,7 @@ import io.prometheus.client.exporter.common.TextFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +50,7 @@ import java.util.stream.Collectors;
  * @date 2023/8/29 10:02
  */
 @Service
+@ConditionalOnProperty(name = "prometheus.metrics.model", havingValue = "pull")
 @Slf4j
 public class DataCacheService {
 
@@ -48,7 +65,7 @@ public class DataCacheService {
     private boolean startCache = false;
 
     @Resource
-    private MutiMetricsCall call;
+    private MultiMetricsCall call;
 
     @Resource
     private EnterManager enterManager;
@@ -80,7 +97,7 @@ public class DataCacheService {
                     enterManager.getMonitor().enter();
                     try {
                         while (enterManager.getProcessNum().get() > 0) {
-                            TimeUnit.MILLISECONDS.sleep(200);
+                            TimeUnit.MILLISECONDS.sleep(20);
                         }
                         call.change();
                     } finally {
@@ -161,7 +178,7 @@ public class DataCacheService {
             log.info("sync cache data error : ", e);
         }
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(baos)) {
-            TextFormat.writeFormat(TextFormat.CONTENT_TYPE_004, writer, registry.filteredMetricFamilySamples(Sets.newHashSet(list)));
+            TextFormat.writeFormat(prometheusPullHeader, writer, registry.filteredMetricFamilySamples(Sets.newHashSet(list)));
             writer.flush();
             return baos.toByteArray();
         } catch (Throwable ex) {
