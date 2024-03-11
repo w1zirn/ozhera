@@ -39,7 +39,7 @@ public class ServiceConfiguration {
     @Value("${trace.config.get.http.domain}")
     private String configGetHttpDomain;
 
-    @Autowired
+    @Autowired(required = false)
     private HeraTraceEtlConfigMapper heraTraceEtlConfigMapper;
 
     @Bean

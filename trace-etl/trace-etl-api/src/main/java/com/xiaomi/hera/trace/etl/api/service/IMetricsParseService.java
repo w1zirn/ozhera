@@ -15,6 +15,7 @@
  */
 package com.xiaomi.hera.trace.etl.api.service;
 
+import com.xiaomi.hera.trace.etl.domain.metrics.SpanHolder;
 import com.xiaomi.hera.tspandata.TSpanData;
 
 /**
@@ -26,5 +27,11 @@ public interface IMetricsParseService {
 
     void parse(TSpanData tSpanData);
 
-
+    /**
+     * Used for handling some special logic.
+     * @param spanHolder
+     * @return span is valid? Execution can proceed only if it's valid.
+     * true is valid, false is invalid
+     */
+    boolean parseBefore(SpanHolder spanHolder);
 }

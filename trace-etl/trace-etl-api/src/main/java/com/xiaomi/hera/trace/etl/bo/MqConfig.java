@@ -43,4 +43,9 @@ public class MqConfig<T> implements Serializable {
     private int maxPollRecords;
 
     private Properties properties;
+
+    private String consumerAccessKey;
+    private String consumerAccessSecret;
+    private String producerAccessKey;
+    private String producerAccessSecret;
 }

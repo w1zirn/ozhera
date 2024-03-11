@@ -51,6 +51,8 @@ public class TraceAttributes {
      * net msg
      */
     public static final String NET_HOST_NAME = "net.host.name";
+    public static final String NET_HOST_IP = "net.host.ip";
+    public static final String NET_HOST_PORT = "net.host.port";
     public static final String NET_SOCK_HOST_ADDR = "net.sock.host.addr";
     public static final String NET_PEER_NAME = "net.peer.name";
     public static final String NET_SOCK_PEER_ADDR = "net.sock.peer.addr";

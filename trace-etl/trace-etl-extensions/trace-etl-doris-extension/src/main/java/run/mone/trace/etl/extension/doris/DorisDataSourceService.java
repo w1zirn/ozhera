@@ -27,6 +27,7 @@ import com.xiaomi.hera.tspandata.TSpanData;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 public class DorisDataSourceService implements DataSourceService {
 
@@ -68,5 +69,10 @@ public class DorisDataSourceService implements DataSourceService {
     @Override
     public void insertHeraSpan(TSpanData tSpanData, String serviceName, String spanName) {
         writeDorisService.insertHeraSpan(tSpanData, serviceName, spanName);
+    }
+
+    @Override
+    public void insert(String indexPrefix, Map dataMap) {
+        writeDorisService.insert(indexPrefix, dataMap);
     }
 }

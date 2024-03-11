@@ -25,12 +25,14 @@ import com.xiaomi.data.push.client.HttpClientV6;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceConfigVo;
 import com.xiaomi.hera.trace.etl.domain.HeraTraceEtlConfig;
 import com.xiaomi.hera.trace.etl.domain.PageData;
+import com.xiaomi.hera.trace.etl.domain.TraceConfigResp;
 import com.xiaomi.hera.trace.etl.service.api.ManagerService;
 import com.xiaomi.youpin.infra.rpc.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +51,7 @@ public class HttpManagerService implements ManagerService {
 
     private Gson gson = new Gson();
 
-    private static final Type TYPE = new TypeToken<List<HeraTraceEtlConfig>>() { }.getType();
+    private static final Type TYPE = new TypeToken<TraceConfigResp<List<HeraTraceEtlConfig>>>() { }.getType();
 
     public HttpManagerService(String traceConfigApiDomain){
         this.traceConfigApiDomain = traceConfigApiDomain;
@@ -75,16 +77,19 @@ public class HttpManagerService implements ManagerService {
         String url = new StringBuilder(traceConfigApiDomain).append("/manager/getAllList").toString();
         try {
             String result = HttpClientV6.get(url, null);
-            if(StringUtils.isEmpty(result)){
-                List<HeraTraceEtlConfig> list = gson.fromJson(result, TYPE);
-                return list;
+            if(StringUtils.isNotEmpty(result)){
+                TraceConfigResp<List<HeraTraceEtlConfig>> resp = gson.fromJson(result, TYPE);
+                if (resp.getCode() != 0) {
+                    log.error("query trace config with feign client has error {}", resp.getMessage());
+                    return null;
+                }
+                return resp.getData();
             }else{
                 log.error("get trace config result is null!");
             }
         }catch (Throwable t){
             log.error("get trace config error , ", t);
         }
-
         return null;
     }
 

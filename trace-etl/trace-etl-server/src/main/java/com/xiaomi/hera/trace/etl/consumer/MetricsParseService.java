@@ -38,7 +38,15 @@ public class MetricsParseService implements IMetricsParseService {
     public void parse(TSpanData tSpanData) {
         SpanHolder spanHolder = spanHoldService.getSpanHolder(tSpanData);
         if(spanHolder != null) {
+            if(!parseBefore(spanHolder)){
+                return;
+            }
             traceParser.parse(spanHolder);
         }
+    }
+
+    @Override
+    public boolean parseBefore(SpanHolder spanHolder) {
+        return true;
     }
 }

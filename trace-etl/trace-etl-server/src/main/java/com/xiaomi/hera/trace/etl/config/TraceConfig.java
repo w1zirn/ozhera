@@ -53,8 +53,10 @@ public class TraceConfig {
         new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(() -> {
             try {
                 List<HeraTraceEtlConfig> all = managerService.getAll(new HeraTraceConfigVo());
-                for (HeraTraceEtlConfig config : all) {
-                    heraTraceConfig.put(getServiceName(config), config);
+                if(all != null) {
+                    for (HeraTraceEtlConfig config : all) {
+                        heraTraceConfig.put(getServiceName(config), config);
+                    }
                 }
             }catch(Throwable t){
                 log.error("schedule trace config error : ",t);

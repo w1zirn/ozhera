@@ -27,6 +27,7 @@ import com.xiaomi.hera.tspandata.TSpanData;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 public class EsDataSourceService implements DataSourceService {
 
@@ -68,5 +69,10 @@ public class EsDataSourceService implements DataSourceService {
     @Override
     public void insertHeraSpan(TSpanData tSpanData, String serviceName, String spanName) {
         writeEsService.insertJaegerSpan(tSpanData, serviceName, spanName);
+    }
+
+    @Override
+    public void insert(String indexPrefix, Map dataMap) {
+        writeEsService.insert(indexPrefix, dataMap);
     }
 }

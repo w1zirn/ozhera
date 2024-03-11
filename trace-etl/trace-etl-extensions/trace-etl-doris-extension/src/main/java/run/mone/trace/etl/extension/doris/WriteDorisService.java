@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -273,4 +274,12 @@ public class WriteDorisService {
 
     }
 
+    public void insert(String tableName, Map<String, Object> dataMap){
+        try{
+            List<String> column = new ArrayList<>(dataMap.keySet());
+            dorisService.send(tableName, column, dataMap);
+        }catch (Throwable t){
+            log.error("insert data into doris", t);
+        }
+    }
 }

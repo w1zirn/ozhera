@@ -178,7 +178,7 @@ public class DataCacheService {
             log.info("sync cache data error : ", e);
         }
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(baos)) {
-            TextFormat.writeFormat(TextFormat.CONTENT_TYPE_004, writer, registry.filteredMetricFamilySamples(Sets.newHashSet(list)));
+            TextFormat.writeFormat(prometheusPullHeader, writer, registry.filteredMetricFamilySamples(Sets.newHashSet(list)));
             writer.flush();
             return baos.toByteArray();
         } catch (Throwable ex) {

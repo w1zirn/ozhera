@@ -25,6 +25,7 @@ import com.xiaomi.hera.trace.etl.domain.tracequery.TraceQueryResult;
 import com.xiaomi.hera.tspandata.TSpanData;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DataSourceService {
 
@@ -41,4 +42,6 @@ public interface DataSourceService {
     void insertDriver(DriverSourceDomain driverSourceDomain);
 
     void insertHeraSpan(TSpanData tSpanData, String serviceName, String spanName);
+
+    void insert(String indexPrefix, Map dataMap);
 }
